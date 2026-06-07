@@ -1,0 +1,1233 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="パパ日記">
+  <meta name="theme-color" content="#D4537E">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
+  <title>パパの妊娠日記</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Kosugi+Maru&family=Yomogi&family=DotGothic16&family=Zen+Kurenaido&display=swap" rel="stylesheet">
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Klee+One:wght@400;600&family=Kosugi+Maru&family=Zen+Kurenaido&family=Yomogi&family=DotGothic16&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --pink:#D4537E;--pink-l:#FBEAF0;--pink-m:#F4C0D1;
+  --teal:#1D9E75;--teal-l:#E1F5EE;--teal-m:#9FE1CB;
+  --amber:#EF9F27;--amber-l:#FAEEDA;
+  --purple:#7F77DD;--purple-l:#EEEDFE;
+  --text:#1a1a1a;--text2:#555;--text3:#999;
+  --bg:#F7F4F1;--card:#fff;--border:rgba(0,0,0,0.08);
+  --r:14px;--safe-b:env(safe-area-inset-bottom,0px);--safe-t:env(safe-area-inset-top,0px);
+}
+html{height:100%;-webkit-text-size-adjust:100%}
+body{font-family:'Kosugi Maru',-apple-system,sans-serif;background:var(--bg);color:var(--text);
+  overscroll-behavior:none;-webkit-tap-highlight-color:transparent;min-height:100vh}
+button{cursor:pointer;font-family:inherit;border:none;background:none}
+input,textarea,select{font-family:inherit}
+.hidden{display:none!important}
+
+/* ===== 表紙ページ ===== */
+#coverPage{
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  width:100%;height:100%;
+  z-index:1000;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  -webkit-overflow-scrolling:touch;
+}
+.cover-bg{
+  position:absolute;top:0;left:0;right:0;bottom:0;
+  width:100%;height:100%;
+  background-size:cover;background-position:center;
+}
+.cover-overlay{
+  position:absolute;top:0;left:0;right:0;bottom:0;
+  background:linear-gradient(180deg,rgba(0,0,0,.3) 0%,rgba(0,0,0,.05) 40%,rgba(0,0,0,.5) 100%);
+}
+.cover-gear{
+  position:relative;z-index:10;
+  margin:16px 16px 0 auto;
+  width:40px;height:40px;
+  border-radius:10px;
+  background:rgba(255,255,255,.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;color:white;
+  border:none;cursor:pointer;
+  -webkit-appearance:none;
+}
+.cover-body{
+  position:relative;z-index:10;
+  flex:1;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:20px;gap:16px;
+}
+.cover-baby-card{
+  background:rgba(255,255,255,.9);
+  border-radius:20px;padding:18px 22px;
+  min-width:140px;max-width:160px;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  cursor:pointer;position:relative;
+  -webkit-tap-highlight-color:transparent;
+}
+.cover-add{
+  background:rgba(255,255,255,.2);
+  border:2px dashed rgba(255,255,255,.8);
+  border-radius:16px;color:white;
+  font-size:15px;padding:14px 28px;
+  display:flex;align-items:center;gap:8px;
+  font-family:'Klee One',cursive;
+  cursor:pointer;-webkit-appearance:none;
+}
+.cover-card-btn{
+  width:28px;height:28px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  border:none;cursor:pointer;font-size:13px;
+  -webkit-appearance:none;
+}
+.cover-card-btn.edit-btn{background:var(--pink-l);color:var(--pink);}
+.cover-card-btn.del-btn{background:#fff0f0;color:#cc4444;}
+.cover-hint{
+  position:relative;z-index:10;
+  text-align:center;
+  color:rgba(255,255,255,.8);
+  font-size:12px;
+  padding:16px 0 30px;
+}
+
+/* 表紙設定 */
+.bg-theme-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.bg-theme-btn{width:70px;height:70px;border-radius:12px;border:3px solid transparent;background-size:cover;background-position:center;cursor:pointer;transition:.15s}
+.bg-theme-btn.active{border-color:var(--pink)}
+.custom-bg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}
+.custom-bg-item{aspect-ratio:1;border-radius:10px;border:2px solid var(--border);background-size:cover;background-position:center;cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center}
+.custom-bg-item.active{border-color:var(--pink)}
+.custom-bg-del{position:absolute;top:3px;right:3px;background:rgba(0,0,0,.5);color:white;border-radius:50%;width:20px;height:20px;font-size:10px;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer}
+.custom-bg-add{aspect-ratio:1;border-radius:10px;border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--text3);cursor:pointer}
+
+/* ===== メインアプリ ===== */
+.main-app{display:flex;flex-direction:column;height:100vh;overflow:hidden}
+#appBgOverlay{position:fixed;inset:0;z-index:-1;background-size:cover;background-position:center}
+#appBgOverlay.has-bg::after{content:'';position:fixed;inset:0;background:rgba(255,250,252,0.72)}
+
+/* INSTALL */
+.install-banner{background:var(--pink);color:white;padding:10px 14px;padding-top:calc(10px + var(--safe-t))}
+.install-content{display:flex;align-items:center;gap:10px;max-width:480px;margin:0 auto}
+.install-title{font-size:13px;font-weight:600}.install-sub{font-size:11px;opacity:.9;margin-top:2px}
+.install-content button{margin-left:auto;background:rgba(255,255,255,.2);color:white;border-radius:50%;width:28px;height:28px;font-size:13px;display:flex;align-items:center;justify-content:center}
+
+/* HEADER */
+.app-header{background:rgba(255,255,255,.94);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--border);padding:8px 12px;padding-top:calc(8px + var(--safe-t));
+  display:flex;align-items:center;gap:8px;flex-shrink:0}
+.header-back-btn{width:36px;height:36px;border-radius:9px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--text2);flex-shrink:0}
+.header-center{flex:1;min-width:0;text-align:center}
+.app-title{font-family:'Klee One',cursive;font-size:16px;color:var(--pink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.app-subtitle{font-size:10px;color:var(--text3)}
+.header-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.header-week-badge{background:var(--pink-l);color:var(--pink);font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;white-space:nowrap}
+.icon-btn{width:36px;height:36px;border-radius:9px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:19px;color:var(--text2);flex-shrink:0}
+
+/* TOP TABS */
+.top-tabs{display:flex;background:white;border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto;scrollbar-width:none}
+.top-tabs::-webkit-scrollbar{display:none}
+.top-tab{flex:1;min-width:70px;padding:9px 4px 7px;font-size:11px;color:var(--text3);border-bottom:2px solid transparent;transition:.15s;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:2px}
+.top-tab i{font-size:18px}
+.top-tab.active{color:var(--pink);border-bottom-color:var(--pink);font-weight:500}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 14px 20px;max-width:480px;margin:0 auto;width:100%}
+.view{display:none}.view.active{display:block}
+
+/* WEEK HERO */
+.week-hero{background:linear-gradient(135deg,#FBEAF0,#E8F8F2);border-radius:var(--r);padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px}
+.week-baby-wrap{flex-shrink:0;width:72px;height:72px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.6);border-radius:50%}
+.week-info{flex:1;min-width:0}
+.week-badge{display:inline-block;background:var(--pink);color:white;font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;margin-bottom:5px}
+.week-title{font-size:16px;margin-bottom:3px}
+.week-desc{font-size:11px;color:var(--text2);line-height:1.5;margin-bottom:4px}
+.days-until{font-size:11px;color:var(--pink);font-weight:500}
+
+/* STATS */
+.week-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.stat-card{background:var(--card);border-radius:12px;padding:11px 6px 9px;text-align:center;border:1px solid var(--border)}
+.stat-val{font-size:20px;font-weight:700;color:var(--teal);line-height:1}
+.stat-val.small-val{font-size:13px}
+.stat-unit{font-size:10px;color:var(--text3);margin-top:1px}
+.stat-label{font-size:10px;color:var(--text3);margin-top:2px}
+
+/* SECTION CARD */
+.section-card{background:rgba(255,255,255,.93);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;margin-bottom:10px}
+.section-hd{padding:10px 14px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.section-hd.pink{background:var(--pink-l);color:var(--pink)}
+.section-hd.teal{background:var(--teal-l);color:var(--teal)}
+.section-hd.purple{background:var(--purple-l);color:var(--purple)}
+.section-hd.gray{background:#F5F3EF;color:var(--text2)}
+.section-bd{padding:12px 14px}
+
+/* DATE NAV inline */
+.date-nav-inline{margin-left:auto;display:flex;align-items:center;gap:4px}
+.date-nav-btn{width:28px;height:28px;border-radius:7px;background:var(--pink-l);color:var(--pink);display:flex;align-items:center;justify-content:center;font-size:15px}
+.date-nav-btn:disabled{opacity:.3}
+.date-nav-label{font-size:11px;color:var(--text2);min-width:70px;text-align:center}
+.date-jump-btn{background:var(--pink);color:white;border:none;border-radius:7px;padding:3px 8px;font-size:11px;cursor:pointer}
+
+/* WEEK GRID */
+.week-grid{display:flex;flex-wrap:wrap;gap:6px}
+.week-btn{width:40px;height:40px;border-radius:9px;border:1.5px solid var(--border);background:var(--bg);font-size:13px;display:flex;align-items:center;justify-content:center;color:var(--text);transition:.12s;position:relative;flex-shrink:0}
+.week-btn:active{transform:scale(.92)}
+.week-btn.active{background:var(--pink);color:white;border-color:var(--pink);font-weight:600}
+.week-btn.has-diary{background:var(--teal-l);border-color:var(--teal);color:var(--teal)}
+.week-btn.active.has-diary{background:var(--pink);color:white;border-color:var(--pink)}
+.week-btn .dot-mark{position:absolute;top:-3px;right:-3px;width:8px;height:8px;background:var(--teal);border-radius:50%;border:1.5px solid white}
+
+/* TRIVIA */
+.trivia-box{background:linear-gradient(135deg,#FFF8E1,#E8F5E9);border-radius:12px;padding:12px}
+.trivia-fact{font-size:13px;color:#333;line-height:1.8;margin-bottom:8px}
+.trivia-papa{background:rgba(255,255,255,.7);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--teal);border-left:3px solid var(--teal);margin-bottom:6px;line-height:1.6}
+.trivia-order{font-size:11px;color:#888;font-style:italic}
+
+/* FORM */
+.form-row{margin-bottom:12px}.form-row:last-child{margin-bottom:0}
+.form-row.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-label{display:block;font-size:12px;color:var(--text2);margin-bottom:4px;font-weight:500}
+.text-input{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;background:var(--bg);color:var(--text);-webkit-appearance:none}
+.text-input:focus{outline:none;border-color:var(--pink);background:white}
+.textarea{width:100%;padding:11px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;resize:none;min-height:88px;background:var(--bg);color:var(--text);line-height:1.7;-webkit-appearance:none}
+.textarea:focus{outline:none;border-color:var(--pink);background:white}
+.radio-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.radio-btn{display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer;background:var(--bg);padding:6px 10px;border-radius:8px;border:1px solid var(--border)}
+.radio-btn input{accent-color:var(--pink)}
+.sibling-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.sibling-row input{flex:1}
+.sibling-row button{width:30px;height:30px;border-radius:8px;background:var(--pink-l);color:var(--pink);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.add-sibling-btn{width:100%;padding:10px;border:2px dashed var(--teal-m);border-radius:10px;background:var(--teal-l);color:var(--teal);font-size:13px;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:4px}
+
+/* PHOTO */
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:8px;margin-bottom:2px}
+.photo-thumb{aspect-ratio:1;border-radius:10px;overflow:hidden;position:relative;background:var(--teal-l);border:1px solid var(--border)}
+.photo-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-thumb .rm-btn{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.5);color:white;border-radius:50%;width:22px;height:22px;font-size:11px;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer}
+.upload-btn{display:flex;align-items:center;gap:8px;margin-top:8px;padding:10px 14px;border:2px dashed var(--pink-m);border-radius:10px;background:var(--pink-l);color:var(--pink);font-size:13px;cursor:pointer}
+.upload-btn.teal-btn{border-color:var(--teal-m);background:var(--teal-l);color:var(--teal)}
+.upload-btn i{font-size:19px}
+input[type=file]{display:none}
+.save-btn{width:100%;margin-top:10px;padding:13px;background:var(--pink);color:white;border-radius:12px;font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;transition:.15s}
+.save-btn:active{transform:scale(.98);background:#b84069}
+.save-btn.teal-save{background:var(--teal)}.save-btn.teal-save:active{background:#0f6e56}
+.bg-clear-btn{background:none;border:1px solid var(--border);border-radius:7px;padding:5px 10px;font-size:12px;color:var(--text3);cursor:pointer}
+.cover-bg-preview{width:100%;aspect-ratio:16/5;border-radius:10px;background-size:cover;background-position:center;margin-top:8px;border:1px solid var(--border);display:none}
+.cover-bg-preview.has-bg{display:block}
+
+/* FLIP */
+.flip-card{background:var(--card);border-radius:20px;border:1px solid var(--border);padding:20px 18px 18px;margin-bottom:12px;position:relative;overflow:hidden;box-shadow:0 2px 16px rgba(212,83,126,.08)}
+.flip-week-bg{position:absolute;top:-10px;right:-8px;font-family:'Klee One',cursive;font-size:96px;font-weight:600;color:var(--pink);opacity:.07;line-height:1;pointer-events:none;user-select:none}
+.flip-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.flip-badge{background:var(--pink-l);color:var(--pink);font-size:12px;font-weight:500;padding:3px 12px;border-radius:20px}
+.flip-trim{font-size:11px;color:var(--text3);background:var(--bg);padding:3px 10px;border-radius:20px}
+.flip-baby-wrap{display:flex;justify-content:center;margin-bottom:10px}
+.flip-title{font-size:20px;text-align:center;margin-bottom:8px}
+.flip-chips{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:10px}
+.flip-chip{background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--text2)}
+.flip-desc{font-size:13px;color:var(--text2);line-height:1.7;text-align:center;margin-bottom:8px}
+.flip-comment{background:var(--teal-l);border-radius:10px;padding:9px 13px;font-size:13px;color:#085041;border-left:3px solid var(--teal);margin-top:8px;line-height:1.6}
+.flip-photo{margin-top:8px}.flip-photo img{width:100%;border-radius:10px;max-height:150px;object-fit:cover}
+.flip-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.flip-nav-btn{flex:1;padding:10px 12px;background:var(--card);border:1.5px solid var(--border);border-radius:12px;font-size:13px;color:var(--text);display:flex;align-items:center;gap:4px;justify-content:center;transition:.15s}
+.flip-nav-btn:active{background:var(--pink-l);border-color:var(--pink);color:var(--pink)}
+.flip-nav-btn:disabled{opacity:.3}
+.flip-wk-ind{font-family:'Klee One',cursive;font-size:16px;font-weight:600;color:var(--pink);min-width:52px;text-align:center}
+.flip-dots-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;padding:2px 0 6px}
+.flip-dots{display:flex;gap:4px;min-width:max-content;padding:0 2px}
+.flip-dot{width:26px;height:26px;border-radius:6px;background:var(--bg);border:1px solid var(--border);font-size:10px;color:var(--text3);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.flip-dot.has{background:var(--teal-l);border-color:var(--teal);color:var(--teal)}
+.flip-dot.cur{background:var(--pink);border-color:var(--pink);color:white;font-weight:700}
+
+/* CALENDAR */
+.cal-nav-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.cal-title{font-size:17px}
+.cal-dow-row{display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:4px}
+.cal-dow-row span{text-align:center;font-size:11px;color:var(--text3);font-weight:500;padding:3px 0}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:8px}
+.cal-day{aspect-ratio:1;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;position:relative;color:var(--text)}
+.cal-day:active{background:var(--pink-l)}
+.cal-day.today{background:var(--bg);border:2px solid var(--text3);font-weight:700}
+.cal-day.has-papa{background:var(--pink-l)}
+.cal-day.has-papa::after{content:'';position:absolute;bottom:2px;width:5px;height:5px;background:var(--pink);border-radius:50%}
+.cal-legend{display:flex;gap:14px;justify-content:center;font-size:11px;color:var(--text3);margin-bottom:10px}
+.cal-legend span{display:flex;align-items:center;gap:4px}
+.dot{width:7px;height:7px;border-radius:50%}.pink-dot{background:var(--pink)}.gray-dot{border:2px solid var(--text3)}
+
+/* EXPORT / INSTA */
+.insta-preview-wrap{display:flex;flex-direction:column;align-items:center;margin-bottom:16px}
+.export-preview-label{font-size:11px;color:var(--text3);margin-top:6px}
+.insta-card{width:240px;height:240px;border-radius:18px;background:linear-gradient(135deg,#FBEAF0,#E1F5EE);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;border:1px solid var(--border)}
+.insta-bg-c{position:absolute;width:110px;height:110px;border-radius:50%;pointer-events:none}
+.insta-bg-c.top-right{top:-28px;right:-28px;background:var(--pink-m);opacity:.4}
+.insta-bg-c.bottom-left{bottom:-28px;left:-28px;background:var(--teal-m);opacity:.4}
+.insta-inner{position:relative;z-index:1;text-align:center;padding:14px}
+.insta-wk-label{font-size:9px;color:var(--pink);font-weight:600;letter-spacing:4px;margin-bottom:2px}
+.insta-wk-num{font-family:'Klee One',cursive;font-size:58px;font-weight:600;color:var(--pink);line-height:1;margin-bottom:3px}
+.insta-div{width:32px;height:2px;background:var(--pink);margin:6px auto;border-radius:2px}
+.insta-title{font-family:'Klee One',cursive;font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px}
+.insta-body{font-size:10px;color:var(--text2);line-height:1.5}
+.insta-tags{font-size:8px;color:var(--pink);margin-top:5px}
+.export-list{display:flex;flex-direction:column;gap:8px}
+.export-item{background:rgba(255,255,255,.93);border:1px solid var(--border);border-radius:var(--r);padding:13px;display:flex;align-items:center;gap:12px;text-align:left;transition:.15s;width:100%}
+.export-item:active{background:var(--pink-l);border-color:var(--pink-m)}
+.export-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0}
+.insta-grad{background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:white}
+.pink-icon{background:var(--pink-l);color:var(--pink)}.teal-icon{background:var(--teal-l);color:var(--teal)}
+.purple-icon{background:var(--purple-l);color:var(--purple)}.amber-icon{background:var(--amber-l);color:var(--amber)}
+.gray-icon{background:var(--bg);color:var(--text2)}
+.export-name{font-size:14px;font-weight:500;color:var(--text);margin-bottom:2px}
+.export-desc{font-size:11px;color:var(--text3)}
+.export-info{flex:1;min-width:0}
+.export-item>i:last-child{font-size:17px;color:var(--text3);flex-shrink:0}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.45);display:flex;align-items:flex-end}
+.modal-card{background:var(--card);border-radius:20px 20px 0 0;width:100%;max-height:88vh;overflow-y:auto;padding-bottom:var(--safe-b);animation:slideUp .3s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-hd{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--card);z-index:1}
+.modal-title{font-size:17px;font-weight:600}.modal-bd{padding:14px 18px}
+.danger-btn{width:100%;margin-top:14px;padding:13px;background:#fff0f0;color:#cc2222;border:1.5px solid #ffcccc;border-radius:12px;font-size:14px;font-weight:500}
+.month-item{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer;font-size:14px}
+.month-item:last-child{border-bottom:none}.month-item:active{color:var(--pink)}
+
+/* FONT SELECTOR */
+.font-selector{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.font-btn{flex:1;min-width:0;padding:8px 4px;border:2px solid var(--border);border-radius:9px;background:var(--bg);display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;color:var(--text2);transition:.15s}
+.font-btn.active{border-color:var(--pink);background:var(--pink-l);color:var(--pink)}
+.fp-maru{font-family:'Kosugi Maru';font-size:20px}.fp-tegaki{font-family:'Yomogi';font-size:20px}
+.fp-pop{font-family:'DotGothic16';font-size:20px}.fp-ehon{font-family:'Zen Kurenaido';font-size:20px}
+.fp-choutai{font-family:'Klee One';font-size:20px;transform:scaleX(.72);display:inline-block}
+.font-maru{font-family:'Kosugi Maru',sans-serif!important}
+
+/* TOAST */
+.toast{position:fixed;bottom:calc(30px + var(--safe-b));left:50%;transform:translateX(-50%) translateY(20px);background:rgba(30,30,30,.88);color:white;padding:10px 20px;border-radius:22px;font-size:13px;opacity:0;transition:all .3s;z-index:500;white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ===== ロードマップ ===== */
+.rm-section{background:rgba(255,255,255,.93);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;margin-bottom:10px}
+.rm-hd{padding:10px 14px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--border)}
+.rm-body{padding:10px 14px}
+.rm-item{font-size:13px;color:var(--text);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.5}
+.rm-item:last-child{border-bottom:none}
+.rm-check-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer}
+.rm-check-item:last-child{border-bottom:none}
+.rm-check-box{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;background:var(--bg);color:var(--teal);font-weight:700;transition:.15s}
+.rm-check-box.checked{background:var(--teal);border-color:var(--teal);color:white}
+.rm-check-label{font-size:13px;color:var(--text)}
+.rm-check-label.done{text-decoration:line-through;color:var(--text3)}
+.rm-guide-card{background:var(--bg);border-radius:10px;padding:12px;margin-bottom:8px;border:1px solid var(--border)}
+.rm-guide-card:last-child{margin-bottom:0}
+.rm-guide-title{font-size:14px;font-weight:600;color:var(--teal);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.rm-guide-row{display:flex;gap:8px;font-size:12px;color:var(--text);padding:3px 0;line-height:1.5}
+.rm-guide-key{color:var(--text3);width:36px;flex-shrink:0;font-weight:500}
+
+</style>
+</head>
+<body>
+
+<!-- ===== 表紙 ===== -->
+<div id="coverPage">
+  <div id="coverBg"></div>
+  <div class="cover-overlay"></div>
+  <button class="cover-gear" onclick="openCoverSettings()"><i class="ti ti-settings"></i></button>
+  <div class="cover-body">
+    <div id="coverCards"></div>
+    <button class="cover-add" onclick="addBaby()"><i class="ti ti-plus"></i> New Baby</button>
+  </div>
+  <div class="cover-hint">タップして日記を開く</div>
+</div>
+
+<!-- 表紙設定 -->
+<div id="coverModal" class="modal-overlay" style="display:none" onclick="if(event.target===this)closeCoverSettings()">
+  <div class="modal-card">
+    <div class="modal-hd">
+      <span class="modal-title">表紙の背景を変更</span>
+      <button class="icon-btn" onclick="closeCoverSettings()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-bd">
+      <div class="form-label" style="margin-bottom:8px">自分の写真を設定（最大3枚）</div>
+      <div id="bgCustoms" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px"></div>
+      <label class="upload-btn" for="bgFileInput"><i class="ti ti-photo-plus"></i> 写真を追加</label>
+      <input type="file" id="bgFileInput" accept="image/*">
+      <button onclick="selBg(0);closeCoverSettings();" style="width:100%;margin-top:12px;padding:11px;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;font-size:13px;color:var(--text2);cursor:pointer">デフォルト画像に戻す</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== メインアプリ ===== -->
+<div id="mainApp" style="display:none;flex-direction:column;height:100vh;overflow:hidden">
+
+  <div id="installBanner" class="install-banner" style="display:none">
+    <div class="install-content">
+      <span>👶</span>
+      <div><div class="install-title">ホーム画面に追加</div><div class="install-sub">Safari の 共有 → ホーム画面に追加</div></div>
+      <button onclick="dismissInstall()">✕</button>
+    </div>
+  </div>
+
+  <header class="app-header">
+    <button class="header-back-btn" onclick="goToCover()"><i class="ti ti-chevron-left"></i></button>
+    <div class="header-center">
+      <div class="app-title" id="appTitle">パパの妊娠日記</div>
+      <div class="app-subtitle" id="headerSub">成長を記録しよう</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px">
+      <span class="header-week-badge" id="headerWeekBadge"></span>
+      <button class="icon-btn" onclick="openSettings()"><i class="ti ti-settings"></i></button>
+    </div>
+  </header>
+
+  <div class="top-tabs">
+    <button class="top-tab active" onclick="showView('record')" id="tab-record"><i class="ti ti-pencil"></i><span>記録</span></button>
+    <button class="top-tab" onclick="showView('flip')" id="tab-flip"><i class="ti ti-cards"></i><span>日めくり</span></button>
+    <button class="top-tab" onclick="showView('calendar')" id="tab-calendar"><i class="ti ti-calendar"></i><span>カレンダー</span></button>
+    <button class="top-tab" onclick="showView('roadmap')" id="tab-roadmap"><i class="ti ti-map"></i><span>やること</span></button>
+    <button class="top-tab" onclick="showView('export')" id="tab-export"><i class="ti ti-share"></i><span>出力</span></button>
+  </div>
+
+  <main class="main" id="mainContent">
+
+    <!-- 記録 -->
+    <div id="view-record" class="view active">
+      <div class="week-hero">
+        <div class="week-baby-wrap"><svg id="babyIconMain" viewBox="0 0 80 80" width="68" height="68"></svg></div>
+        <div class="week-info">
+          <span class="week-badge" id="weekBadge">妊娠--週</span>
+          <div class="week-title" id="weekTitle">週数を選んでください</div>
+          <div class="week-desc" id="weekDesc"></div>
+          <div class="days-until" id="daysUntil"></div>
+        </div>
+      </div>
+      <div class="week-stats">
+        <div class="stat-card"><div class="stat-val" id="statSize">-</div><div class="stat-unit" id="statSizeU">mm</div><div class="stat-label">頭殿長</div></div>
+        <div class="stat-card"><div class="stat-val" id="statWeight">-</div><div class="stat-unit" id="statWeightU">g</div><div class="stat-label">体重目安</div></div>
+        <div class="stat-card"><div class="stat-val small-val" id="statSimilar">-</div><div class="stat-unit"></div><div class="stat-label">大きさ</div></div>
+      </div>
+      <!-- 週数選択 折りたたみ -->
+      <div class="section-card">
+        <div class="section-hd gray" onclick="toggleWeekGrid()" style="cursor:pointer">
+          <i class="ti ti-calendar-week"></i> 妊娠週数を選ぶ
+          <span id="weekBadgeSub" style="margin-left:6px;background:var(--pink);color:white;font-size:11px;padding:2px 9px;border-radius:20px"></span>
+          <i class="ti ti-chevron-down" id="weekChevron" style="margin-left:auto;transition:.2s"></i>
+        </div>
+        <div id="weekGridWrap" style="display:none"><div class="section-bd"><div class="week-grid" id="weekGrid"></div></div></div>
+      </div>
+      <!-- パパ日記 -->
+      <div class="section-card">
+        <div class="section-hd pink">
+          <i class="ti ti-pencil"></i> パパ日記
+          <div style="margin-left:auto;display:flex;align-items:center;gap:4px">
+            <button class="date-nav-btn" onclick="moveDiaryDate(-1)"><i class="ti ti-chevron-left"></i></button>
+            <span class="date-nav-label" id="diaryDateLabel"></span>
+            <button class="date-nav-btn" id="dateNextBtn" onclick="moveDiaryDate(1)"><i class="ti ti-chevron-right"></i></button>
+            <button class="date-jump-btn" onclick="jumpToToday()">今日</button>
+          </div>
+        </div>
+        <div class="section-bd">
+          <textarea class="textarea" id="dailyMsg" placeholder="わが子へのメッセージ、今日の気持ち..."></textarea>
+          <div id="dailyPhotoGrid" class="photo-grid"></div>
+          <label class="upload-btn" for="dailyPhotoInput"><i class="ti ti-camera-plus"></i> 写真を追加</label>
+          <input type="file" id="dailyPhotoInput" accept="image/*" multiple>
+          <button class="save-btn" onclick="saveDailyDiary()"><i class="ti ti-heart-filled"></i> 保存する</button>
+        </div>
+      </div>
+      <!-- ママのお腹 -->
+      <div class="section-card">
+        <div class="section-hd teal"><i class="ti ti-heart"></i> ママのお腹（週ごと）</div>
+        <div class="section-bd">
+          <div id="mamaPhotoGrid" class="photo-grid"></div>
+          <label class="upload-btn teal-btn" for="mamaPhotoInput"><i class="ti ti-camera-plus"></i> お腹の写真</label>
+          <input type="file" id="mamaPhotoInput" accept="image/*" multiple>
+          <textarea class="textarea" id="mamaMsg" placeholder="今週のお腹の変化..."></textarea>
+          <button class="save-btn teal-save" onclick="saveMamaDiary()"><i class="ti ti-heart-filled"></i> 保存する</button>
+        </div>
+      </div>
+      <!-- 豆知識 -->
+      <div class="section-card">
+        <div class="section-hd purple"><i class="ti ti-bulb"></i> パパの豆知識</div>
+        <div class="section-bd"><div id="triviaBox"></div></div>
+      </div>
+    </div>
+
+    <!-- 日めくり -->
+    <div id="view-flip" class="view">
+      <div class="flip-card" id="flipCard">
+        <div class="flip-week-bg" id="flipWeekBg"></div>
+        <div class="flip-top">
+          <span class="flip-badge" id="flipBadge">妊娠12週</span>
+          <span class="flip-trim" id="flipTrim">妊娠初期</span>
+        </div>
+        <div style="display:flex;justify-content:center;margin-bottom:10px">
+          <svg id="babyIconFlip" viewBox="0 0 80 80" width="90" height="90"></svg>
+        </div>
+        <div class="flip-title" id="flipTitle"></div>
+        <div id="flipChips" style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:10px"></div>
+        <div class="flip-desc" id="flipDesc"></div>
+        <div class="flip-comment" id="flipComment" style="display:none"></div>
+        <div id="flipPhoto"></div>
+      </div>
+      <div class="flip-nav">
+        <button class="flip-nav-btn" id="flipPrevBtn" onclick="flipPrev()"><i class="ti ti-chevron-left"></i> 前の週</button>
+        <div class="flip-wk-ind" id="flipWkInd">12/40</div>
+        <button class="flip-nav-btn" id="flipNextBtn" onclick="flipNext()">次の週 <i class="ti ti-chevron-right"></i></button>
+      </div>
+      <div style="overflow-x:auto;padding:4px 0 8px"><div class="flip-dots" id="flipDots"></div></div>
+      <div class="section-card" style="margin-top:12px">
+        <div class="section-hd pink"><i class="ti ti-pencil"></i> この週のパパ記録</div>
+        <div id="flipWeekDiary"></div>
+      </div>
+    </div>
+
+    <!-- カレンダー -->
+    <div id="view-calendar" class="view">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <button class="icon-btn" onclick="calPrev()"><i class="ti ti-chevron-left"></i></button>
+        <div style="font-size:17px;font-weight:600" id="calTitle"></div>
+        <button class="icon-btn" onclick="calNext()"><i class="ti ti-chevron-right"></i></button>
+      </div>
+      <div class="cal-dow-row"><span>日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span></div>
+      <div class="cal-grid" id="calGrid"></div>
+      <div class="cal-legend">
+        <span><span class="dot pink-dot"></span>日記あり</span>
+        <span><span class="dot gray-dot"></span>今日</span>
+        <span style="font-size:11px;color:var(--pink)">📝 タップ→日記へ</span>
+      </div>
+    </div>
+
+    <!-- やることリスト -->
+    <div id="view-roadmap" class="view">
+      <div id="roadmapContent"></div>
+    </div>
+
+    <!-- 出力 -->
+    <div id="view-export" class="view">
+      <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:14px">
+        <div class="insta-card">
+          <div class="insta-bg-c top-right"></div>
+          <div class="insta-bg-c bottom-left"></div>
+          <div class="insta-inner">
+            <div class="insta-wk-label">W E E K</div>
+            <div class="insta-wk-num" id="instaWeekNum">--</div>
+            <div class="insta-div"></div>
+            <div class="insta-title" id="instaTitle">妊娠記録</div>
+            <div class="insta-body" id="instaBody">週数を選んで記録を始めよう</div>
+            <div class="insta-tags">#パパ日記 #妊娠記録</div>
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin-top:6px">インスタグラム用プレビュー</div>
+      </div>
+      <div class="export-list">
+        <button class="export-item" onclick="exportInstagram()"><div class="export-icon insta-grad"><i class="ti ti-brand-instagram"></i></div><div class="export-info"><div class="export-name">インスタ用画像</div><div class="export-desc">1:1正方形 PNG</div></div><i class="ti ti-download"></i></button>
+        <button class="export-item" onclick="exportBabyGrowth()"><div class="export-icon pink-icon"><i class="ti ti-heart"></i></div><div class="export-info"><div class="export-name">ママのお腹 成長記録</div><div class="export-desc">週ごとの写真1枚 A4対応</div></div><i class="ti ti-download"></i></button>
+        <button class="export-item" onclick="showMonthPicker()"><div class="export-icon teal-icon"><i class="ti ti-calendar-month"></i></div><div class="export-info"><div class="export-name">月別パパ日記</div><div class="export-desc">1ヶ月分をA4 1枚に</div></div><i class="ti ti-download"></i></button>
+        <button class="export-item" onclick="exportBooklet()"><div class="export-icon purple-icon"><i class="ti ti-book"></i></div><div class="export-info"><div class="export-name">電子冊子</div><div class="export-desc">表紙＋成長記録＋日記</div></div><i class="ti ti-external-link"></i></button>
+        <button class="export-item" onclick="exportJSON()"><div class="export-icon amber-icon"><i class="ti ti-database-export"></i></div><div class="export-info"><div class="export-name">バックアップ</div><div class="export-desc">JSONで全データ保存</div></div><i class="ti ti-download"></i></button>
+        <button class="export-item" onclick="importJSON()"><div class="export-icon gray-icon"><i class="ti ti-database-import"></i></div><div class="export-info"><div class="export-name">データを復元</div><div class="export-desc">バックアップから読み込み</div></div><i class="ti ti-upload"></i></button>
+      </div>
+      <input type="file" id="importInput" accept=".json" style="display:none">
+    </div>
+
+  </main>
+
+  <!-- 設定モーダル -->
+  <div id="settingsModal" class="modal-overlay" style="display:none" onclick="if(event.target===this)closeSettings()">
+    <div class="modal-card">
+      <div class="modal-hd"><span class="modal-title">設定</span><button class="icon-btn" onclick="closeSettings()"><i class="ti ti-x"></i></button></div>
+      <div class="modal-bd">
+        <div class="form-row"><label class="form-label">タイトル</label><input type="text" class="text-input" id="appTitleInput" placeholder="パパの妊娠日記" oninput="previewAppTitle()"></div>
+        <div class="form-row"><label class="form-label">出産予定日</label><input type="date" class="text-input" id="dueDateInput" onchange="saveDueDate()"></div>
+        <div class="form-row"><label class="form-label">赤ちゃんのニックネーム</label><input type="text" class="text-input" id="babyNickInput" placeholder="例：ぷに" oninput="saveBabyNick()"></div>
+        <div class="form-row">
+          <label class="form-label">アプリ背景画像</label>
+          <div style="display:flex;gap:8px"><label class="upload-btn" for="appBgInput" style="margin-top:0;flex:1"><i class="ti ti-photo"></i> 設定</label><button class="bg-clear-btn" onclick="clearAppBg()">削除</button></div>
+          <input type="file" id="appBgInput" accept="image/*">
+          <div id="appBgPreview" class="cover-bg-preview"></div>
+        </div>
+        <button class="danger-btn" onclick="confirmClearAll()">すべてのデータを削除</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 月選択モーダル -->
+  <div id="monthPickerModal" class="modal-overlay" style="display:none" onclick="if(event.target===this)closeMonthPicker()">
+    <div class="modal-card">
+      <div class="modal-hd"><span class="modal-title">月を選ぶ</span><button class="icon-btn" onclick="closeMonthPicker()"><i class="ti ti-x"></i></button></div>
+      <div class="modal-bd" id="monthPickerList"></div>
+    </div>
+  </div>
+
+  <!-- 誕生情報モーダル -->
+  <div id="birthModal" class="modal-overlay" style="display:none" onclick="if(event.target===this)closeBirthModal()">
+    <div class="modal-card">
+      <div class="modal-hd"><span class="modal-title">誕生情報・表紙</span><button class="icon-btn" onclick="closeBirthModal()"><i class="ti ti-x"></i></button></div>
+      <div class="modal-bd">
+        <div class="form-row"><label class="form-label">タイトル</label><input type="text" class="text-input" id="bookTitle" placeholder="〇〇へ、パパからの贈り物"></div>
+        <div class="form-row">
+          <label class="form-label">文字スタイル</label>
+          <div class="font-selector">
+            <button class="font-btn active" data-font="maru" onclick="selectFont('maru',this)"><span class="fp-maru">あ</span>丸文字</button>
+            <button class="font-btn" data-font="tegaki" onclick="selectFont('tegaki',this)"><span class="fp-tegaki">あ</span>手書き</button>
+            <button class="font-btn" data-font="pop" onclick="selectFont('pop',this)"><span class="fp-pop">あ</span>ポップ</button>
+            <button class="font-btn" data-font="ehon" onclick="selectFont('ehon',this)"><span class="fp-ehon">あ</span>絵本風</button>
+          </div>
+        </div>
+        <div class="form-row"><label class="form-label">表紙背景</label><div style="display:flex;gap:8px"><label class="upload-btn" for="coverBgFileInput" style="margin-top:0;flex:1"><i class="ti ti-photo"></i> 設定</label><button class="bg-clear-btn" onclick="clearCoverBg()">削除</button></div><input type="file" id="coverBgFileInput" accept="image/*"><div id="coverBgPreview" class="cover-bg-preview"></div></div>
+        <div class="form-row"><label class="form-label">赤ちゃんのお名前</label><input type="text" class="text-input" id="babyNameBirth" placeholder="〇〇ちゃん"></div>
+        <div class="form-row"><label class="form-label">性別</label><div class="radio-row"><label class="radio-btn"><input type="radio" name="gender" value="男の子"> 👦 男の子</label><label class="radio-btn"><input type="radio" name="gender" value="女の子"> 👧 女の子</label><label class="radio-btn"><input type="radio" name="gender" value=""> 秘密</label></div></div>
+        <div class="form-row"><label class="form-label">出産日時</label><input type="datetime-local" class="text-input" id="birthDatetime"></div>
+        <div class="form-row"><label class="form-label">出産した場所</label><input type="text" class="text-input" id="birthPlace" placeholder="〇〇病院"></div>
+        <div class="form-row two-col"><div><label class="form-label">体重</label><input type="text" class="text-input" id="birthWeight" placeholder="3200g"></div><div><label class="form-label">身長</label><input type="text" class="text-input" id="birthHeight" placeholder="50cm"></div></div>
+        <div class="form-row two-col"><div><label class="form-label">👨 パパ</label><input type="text" class="text-input" id="papaName" placeholder="名前"></div><div><label class="form-label">👩 ママ</label><input type="text" class="text-input" id="mamaName" placeholder="名前"></div></div>
+        <div id="siblingRows"></div>
+        <button class="add-sibling-btn" onclick="addSiblingRow()"><i class="ti ti-plus"></i> 家族を追加</button>
+        <div class="form-row" style="margin-top:12px"><label class="form-label">家族写真</label><div id="familyPhotoGrid" class="photo-grid"></div><label class="upload-btn" for="familyPhotoInput"><i class="ti ti-camera-plus"></i> 追加</label><input type="file" id="familyPhotoInput" accept="image/*" multiple></div>
+        <div class="form-row"><label class="form-label">パパからひとこと</label><textarea class="textarea" id="birthMessage" placeholder="生まれてきてくれてありがとう..."></textarea></div>
+        <button class="save-btn" onclick="saveBirthInfo()"><i class="ti ti-heart-filled"></i> 保存する</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /mainApp -->
+
+<div class="toast" id="toast"></div>
+<canvas id="exportCanvas" style="display:none"></canvas>
+<script>
+'use strict';
+
+// ── 胎児データ ──────────────────────────────────────────────
+const BD={4:{t:'着床・心拍開始',d:'受精卵が子宮に着床し、心臓の鼓動が始まります。',s:5,w:0,f:'ごま粒'},5:{t:'脳・心臓が形成中',d:'脳・心臓・脊椎などの主要器官が形成を始めます。',s:8,w:0,f:'ブルーベリー'},6:{t:'心臓が動き始める',d:'小さな手足の芽が生え、心臓が動き始めます。',s:12,w:1,f:'えんどう豆'},7:{t:'脳・神経が発達中',d:'目・鼻・耳の基礎が作られ、手足の芽ができます。',s:18,w:1,f:'ラズベリー'},8:{t:'指が分かれ始める',d:'脳が急速に発達し、赤ちゃんらしい形になります。',s:25,w:2,f:'グレープ'},9:{t:'肘・膝ができる',d:'関節が形成され、動く姿が見えることもあります。',s:33,w:4,f:'オリーブ'},10:{t:'手首・足指の形成',d:'将来歩くための足が完成へ近づいています。',s:40,w:7,f:'プルーン'},11:{t:'あくびをする',d:'あくびや口を開ける動作ができるようになります。',s:50,w:11,f:'イチジク'},12:{t:'顔立ちが整う',d:'指しゃぶりを始める子もいます。人らしい姿になります。',s:60,w:18,f:'レモン'},13:{t:'腸が発達する',d:'腸が腹腔内に収まり、指紋が形成されます。',s:75,w:30,f:'えびのしっぽ'},14:{t:'性別が判明？',d:'このころから超音波で性別がわかることがあります。',s:85,w:45,f:'こぶし'},15:{t:'産毛に覆われる',d:'全身が産毛に覆われ、表情が豊かになってきます。',s:100,w:65,f:'オレンジ'},16:{t:'耳の機能が発達',d:'赤ちゃんはママの心臓音を毎日聞いています。',s:115,w:100,f:'アボカド'},17:{t:'胎動を感じ始める',d:'ママが胎動を感じ始める時期。脂肪が蓄積されます。',s:130,w:140,f:'梨'},18:{t:'耳で音を聴く',d:'耳が完成し、外の音を聴けるようになります。',s:145,w:190,f:'サツマイモ'},19:{t:'感覚が発達する',d:'嗅覚・味覚・視覚・聴覚・触覚が急速に発達します。',s:155,w:240,f:'マンゴー'},20:{t:'飲み込み・呼吸練習',d:'胎動を感じ始める頃。しゃっくりも始まります。',s:165,w:300,f:'バナナ'},21:{t:'活発に動く！',d:'胎動がはっきりわかるように。睡眠サイクルも形成。',s:270,w:360,f:'ニンジン'},22:{t:'目が開く',d:'まぶたが開き始め、光の明暗を感じられます。',s:280,w:430,f:'パパイヤ'},23:{t:'肌がふっくら',d:'皮膚の下に脂肪がつき、ふっくらした外見になります。',s:290,w:500,f:'グレープフルーツ'},24:{t:'聴覚向上・睡眠リズム形成',d:'パパの声も覚え始めています。毎日話しかけよう！',s:300,w:600,f:'トウモロコシ'},25:{t:'握力がある！',d:'手で握る練習をしています。髪の毛が生え始めます。',s:340,w:700,f:'ルタバガ'},26:{t:'目が開閉する',d:'目を開けたり閉じたりできるようになります。',s:360,w:800,f:'レタス'},27:{t:'脳が急成長',d:'脳が急速に成長し、記憶ができ始めます。',s:370,w:900,f:'カリフラワー'},28:{t:'まぶたが開閉',d:'4Dエコーで表情が見える頃。夢を見ているかも！',s:380,w:1000,f:'ナス'},29:{t:'骨が固くなる',d:'カルシウムが必要な時期。骨が急成長します。',s:390,w:1200,f:'かぼちゃ'},30:{t:'肺成熟が始まる',d:'呼吸の練習はかなり上達しています。',s:400,w:1400,f:'キャベツ'},31:{t:'子宮が満杯に！',d:'動くスペースが狭くなり、力強いキックを感じます。',s:410,w:1600,f:'パイナップル'},32:{t:'肺機能が向上',d:'生存率はかなり高くなります。赤ちゃんらしい体型に。',s:420,w:1800,f:'メロン'},33:{t:'免疫を獲得する',d:'ママから免疫抗体を受け取り、病気に備えます。',s:430,w:2000,f:'パイナップル'},34:{t:'肺が成熟する',d:'医療現場では「34週の壁」と呼ばれることがあります。',s:450,w:2200,f:'白菜'},35:{t:'ほぼ完成形！',d:'肺以外のほぼすべての器官が完成しています。',s:460,w:2500,f:'メロン'},36:{t:'体重増加・脂肪蓄積',d:'赤ちゃんは外の世界に向けて最後の準備中です。',s:470,w:2700,f:'レタス'},37:{t:'正産期！',d:'正産期に突入。陣痛時の動きを確認しておきましょう。',s:480,w:2900,f:'スイカ'},38:{t:'免疫を受け取る',d:'胎盤を通してたくさんの免疫を受け取っています。',s:490,w:3100,f:'スイカ'},39:{t:'出産目前！',d:'ほとんどの産毛が消え、かわいい丸顔になっています。',s:500,w:3300,f:'スイカ'},40:{t:'いよいよ出産予定日！',d:'約280日かけた発達プログラムが完成。隣にいてあげてください！',s:510,w:3500,f:'スイカ'}};
+
+const TV={4:{fact:'この時点で性別・身長・目の色などはすでに決まっています。',papa:'葉酸を一緒に意識して。無理をさせない。'},6:{fact:'人生で一番小さい心臓なのに、すでに働いています。',papa:'心拍確認日を記念日にしてみましょう。'},8:{fact:'約2cmなのに指があります。脳も急速に発達中。',papa:'同じサイズの消しゴムを持ってみてください。'},12:{fact:'指しゃぶりを始める子もいます。',papa:'そろそろ名前を考え始める時期です。'},16:{fact:'赤ちゃんはママの心臓音を毎日聞いています。',papa:'パパも話しかけ開始！毎日声をかけよう。'},20:{fact:'しゃっくりも始まります。',papa:'お腹に手を当てて、胎動を探してみよう。'},24:{fact:'パパの声も覚え始めています。',papa:'毎日同じ言葉を話しかけてあげよう。'},28:{fact:'夢を見ている可能性も示唆されています。',papa:'家族写真を残しておきましょう。'},30:{fact:'呼吸の練習はかなり上達しています。',papa:'そろそろ入院バッグの準備を始めましょう。'},34:{fact:'医療現場では「34週の壁」と呼ばれています。',papa:'ここまで頑張った妻をたくさん褒めてあげてください。'},38:{fact:'胎盤を通してたくさんの免疫を受け取っています。',papa:'連絡体制を確認しておきましょう。'},40:{fact:'約280日かけて完成した発達プログラムが終了します。',papa:'隣にいてあげてください。それが一番大切なことです。'}};
+
+const ROADMAP={papa:{early:['母子手帳取得を手伝う','出産病院を一緒に探す','妊娠について学ぶ','健診に同行する','育休制度を確認'],mid:['育休申請書類を準備','保育園情報を収集する','家計を見直す','両親学級に参加する','育休開始日を調整'],late:['チャイルドシートを準備','入院バッグの内容を確認','緊急連絡先を確認','出生届の書類を準備','出産ルートを確認'],after:['出生届を提出（14日以内）','健康保険に加入','児童手当を申請','医療費助成を申請','育児休業給付金を申請']},mama:{early:['妊婦健診を受ける','つわり対策をする','葉酸を摂取する','産院を決める','産休手続き確認'],mid:['体重管理をする','骨盤ケアをする','両親学級に参加する','マタニティウェアを準備','産休日を調整'],late:['入院準備をする','産休を申請する','出産計画を確認','バースプランを作成','サポート体制を整える'],after:['産後健診を受ける','授乳準備をする','育休手続きをする','母乳育児相談を利用','産後ケアを確認']},seido:{early:['母子健康手帳（市区町村窓口）','妊婦健診補助券（最大14回分）'],mid:['自治体独自の支援（要確認）','出産応援給付金（10万円相当）'],late:['出産育児一時金（50万円）の事前確認','高額療養費制度の確認'],after:['出産育児一時金（50万円）','児童手当（月1〜1.5万円）','乳幼児医療費助成','育児休業給付金（実質手取り8割）','出生後休業支援給付金（2025〜）']}};
+const CHECKS=[{id:'c1',l:'母子手帳取得'},{id:'c2',l:'出産病院予約'},{id:'c3',l:'産休申請'},{id:'c4',l:'育休申請'},{id:'c5',l:'出生届提出'},{id:'c6',l:'健康保険加入'},{id:'c7',l:'児童手当申請'},{id:'c8',l:'医療費助成申請'},{id:'c9',l:'保育園申込'},{id:'c10',l:'出産育児一時金申請'},{id:'c11',l:'育児休業給付金申請'},{id:'c12',l:'チャイルドシート準備'}];
+const GUIDE=[{n:'出産育児一時金',t:'健康保険加入者',a:'50万円',ap:'病院の直接支払制度',lm:'出産後2年以内',d:'健康保険証・母子手帳'},{n:'児童手当',t:'0〜中学生の子を持つ親',a:'月10,000〜15,000円',ap:'市区町村窓口',lm:'出生後15日以内',d:'健康保険証・通帳・マイナンバー'},{n:'乳幼児医療費助成',t:'0歳〜（自治体による）',a:'医療費の自己負担分',ap:'市区町村窓口',lm:'出生後速やかに',d:'健康保険証・母子手帳'},{n:'育児休業給付金',t:'雇用保険加入者',a:'最初180日：手取り約80%',ap:'ハローワーク（会社経由）',lm:'育休開始後2ヶ月ごと',d:'育休申請書・給与明細'},{n:'出生後休業支援給付金',t:'夫婦で育休取得（2025年〜）',a:'実質手取り10割相当を目指す',ap:'ハローワーク',lm:'2025年4月以降',d:'育休申請書・各種証明'},{n:'育児時短就業給付金',t:'時短勤務中の育児中の親（2025年〜）',a:'減少賃金の一部補填',ap:'ハローワーク',lm:'2025年以降',d:'勤務証明・給与明細'}];
+
+const MJ=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+const FM={maru:"'Kosugi Maru',sans-serif",tegaki:"'Yomogi',cursive",pop:"'DotGothic16',sans-serif",ehon:"'Zen Kurenaido',serif",choutai:"'Klee One',cursive"};
+const ETOS=['子🐭','丑🐮','寅🐯','卯🐰','辰🐉','巳🐍','午🐴','未🐑','申🐵','酉🐔','戌🐶','亥🐗'];
+function getEto(y){return ETOS[(y-2020+1200)%12];}
+function getSz(m,d){const s=[['やぎ座♑',12,22],['みずがめ座♒',1,20],['うお座♓',2,19],['おひつじ座♈',3,21],['おうし座♉',4,20],['ふたご座♊',5,21],['かに座♋',6,21],['しし座♌',7,23],['おとめ座♍',8,23],['てんびん座♎',9,23],['さそり座♏',10,23],['いて座♐',11,22]];for(const[n,mo,dd]of s){if(m===mo&&d>=dd||m===(mo%12+1)&&d<dd)return n;}return'やぎ座♑';}
+
+// ── State ────────────────────────────────────────────────────
+let G={babies:[],activeBabyId:null,coverBgIndex:0,customBgs:[]};
+let CW=12,FW=12,CY=new Date().getFullYear(),CM=new Date().getMonth();
+let DD=new Date();DD.setHours(0,0,0,0);
+
+function loadG(){try{const r=localStorage.getItem('papaDiaryG6');if(r)Object.assign(G,JSON.parse(r));}catch(e){}}
+function saveG(){try{localStorage.setItem('papaDiaryG6',JSON.stringify(G));}catch(e){showToast('⚠️ ストレージ容量が不足しています');}}
+function getA(){return G.babies.find(b=>b.id===G.activeBabyId)||null;}
+function D(){const a=getA();return a?a.data:null;}
+
+// ── 表紙 ─────────────────────────────────────────────────────
+const COVER_IMG="data:image/jpeg;base64,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";
+const COVER_PRESETS=[
+  {label:'🌻 デフォルト',img:COVER_IMG},
+  {label:'🌸 ピンク',  grad:'linear-gradient(160deg,#FFD6E7 0%,#FFAFCC 50%,#FFC8DD 100%)'},
+  {label:'🌿 グリーン',grad:'linear-gradient(160deg,#D8F3DC 0%,#95D5B2 50%,#52B788 100%)'},
+  {label:'☁️ ブルー',  grad:'linear-gradient(160deg,#CAF0F8 0%,#90E0EF 50%,#48CAE4 100%)'},
+  {label:'🌅 オレンジ',grad:'linear-gradient(160deg,#FFEDD8 0%,#FFB347 50%,#FF7C2A 100%)'},
+];
+
+function initCoverPage(){
+  renderCoverBg();
+  renderCoverBabies();
+}
+
+function renderCoverBg(){
+  const el=document.getElementById('coverBg');if(!el)return;
+  if(G.coverBgIndex>=COVER_PRESETS.length){
+    const ci=G.coverBgIndex-COVER_PRESETS.length;
+    if(G.customBgs[ci]){
+      el.style.backgroundImage=`url(${G.customBgs[ci]})`;
+      el.style.backgroundSize='cover';el.style.backgroundPosition='center';
+      return;
+    }
+  }
+  const p=COVER_PRESETS[G.coverBgIndex]||COVER_PRESETS[0];
+  if(p.img){
+    el.style.backgroundImage=`url(${p.img})`;
+    el.style.backgroundSize='cover';el.style.backgroundPosition='center top';
+  } else {
+    el.style.backgroundImage=p.grad;
+    el.style.backgroundSize='';
+  }
+}
+
+function renderCoverBabies(){
+  const c=document.getElementById('coverCards');if(!c)return;
+  c.innerHTML='';
+  G.babies.forEach(b=>{
+    const days=calcDays(b.data.dueDate);
+    const card=document.createElement('div');
+    card.className='cover-baby-card';
+    card.innerHTML=`
+      <div style="font-size:34px">👶</div>
+      <div style="font-family:'Klee One',cursive;font-size:17px;font-weight:600;color:var(--pink);text-align:center">${b.name}</div>
+      <div style="font-size:11px;color:var(--text3);text-align:center">${b.data.currentWeek||12}週${days!==null?' / あと'+days+'日':''}</div>
+      <div style="display:flex;gap:6px;margin-top:4px">
+        <button class="cover-card-btn edit-btn" onclick="editName('${b.id}',event)" title="名前を編集"><i class="ti ti-pencil" style="font-size:13px"></i></button>
+        <button class="cover-card-btn del-btn" id="del_${b.id}" onclick="deleteBaby('${b.id}',event)" title="削除"><i class="ti ti-trash" style="font-size:13px"></i></button>
+      </div>`;
+    // カード本体タップで日記を開く（ボタン以外）
+    card.addEventListener('click', function(e){
+      if(e.target.closest('button')) return;
+      openBaby(b.id);
+    });
+    c.appendChild(card);
+  });
+}
+
+// 削除（2段階確認）
+const _deleteConfirm = {};
+function deleteBaby(id, e){
+  e.stopPropagation();
+  const btn = document.getElementById('del_'+id);
+  if(_deleteConfirm[id]){
+    // 2回目クリック → 本当に削除
+    G.babies = G.babies.filter(b=>b.id!==id);
+    if(G.activeBabyId===id) G.activeBabyId=null;
+    delete _deleteConfirm[id];
+    saveG();
+    renderCoverBabies();
+    showToast('🗑 削除しました');
+  } else {
+    // 1回目 → 確認表示
+    _deleteConfirm[id] = true;
+    if(btn){
+      btn.style.background='#ffdddd';
+      btn.style.color='#cc2222';
+      btn.innerHTML='<span style="font-size:10px;white-space:nowrap">本当に削除？</span>';
+    }
+    // 3秒で元に戻す
+    setTimeout(()=>{
+      delete _deleteConfirm[id];
+      renderCoverBabies();
+    }, 3000);
+  }
+}
+
+function calcDays(due){
+  if(!due)return null;
+  return Math.max(0,Math.ceil((new Date(due)-new Date())/864e5));
+}
+
+function addBaby(){
+  const id='baby_'+Date.now();
+  G.babies.push({id,name:'New Baby',data:{dailyDiaries:{},mamaWeekly:{},birthInfo:{},dueDate:null,babyNick:'New Baby',selectedFont:'maru',appBgImage:null,currentWeek:12,roadmapChecks:{}}});
+  saveG();
+  openBaby(id);
+}
+
+function editName(id,e){
+  e.stopPropagation();
+  const b=G.babies.find(x=>x.id===id);if(!b)return;
+  const n=prompt('名前を変更',b.name);
+  if(n===null)return;
+  b.name=n||b.name;if(b.data)b.data.babyNick=b.name;
+  saveG();renderCoverBabies();
+}
+
+function openBaby(id){
+  G.activeBabyId=id;saveG();
+  CW=D().currentWeek||12;FW=CW;
+  document.getElementById('coverPage').style.display='none';
+  const ma=document.getElementById('mainApp');ma.style.display='flex';
+  applyAppBg();initMainApp();
+  if(/iphone|ipad|ipod/i.test(navigator.userAgent)&&!window.navigator.standalone&&!localStorage.getItem('installDismissed'))
+    document.getElementById('installBanner').style.display='block';
+}
+
+function goToCover(){
+  document.getElementById('mainApp').style.display='none';
+  document.getElementById('coverPage').style.display='block';
+  renderCoverBabies();
+}
+
+function openCoverSettings(){
+  renderBgCustoms();
+  document.getElementById('coverModal').style.display='flex';
+}
+function closeCoverSettings(){document.getElementById('coverModal').style.display='none';}
+
+function renderBgCustoms(){
+  const c=document.getElementById('bgCustoms');if(!c)return;
+  const off=COVER_PRESETS.length;
+  c.innerHTML=G.customBgs.map((bg,i)=>
+    `<div style="width:80px;height:80px;border-radius:12px;background:url(${bg});background-size:cover;background-position:center;border:3px solid ${G.coverBgIndex===i+off?'var(--pink)':'var(--border)'};cursor:pointer;position:relative;flex-shrink:0" onclick="selBg(${i+off})">
+      <button onclick="delCustomBg(${i},event)" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,.55);color:white;border:none;border-radius:50%;width:20px;height:20px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>`).join('');
+  if(G.customBgs.length<3)
+    c.innerHTML+=`<label for="bgFileInput" style="width:80px;height:80px;border-radius:12px;border:2px dashed var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;color:var(--text3);cursor:pointer;gap:4px;flex-shrink:0"><i class="ti ti-plus" style="font-size:22px"></i>追加</label>`;
+}
+function selBg(i){G.coverBgIndex=i;saveG();renderCoverBg();renderBgCustoms();}
+function delCustomBg(i,e){
+  e.stopPropagation();
+  G.customBgs.splice(i,1);
+  if(G.coverBgIndex>=i+COVER_PRESETS.length)G.coverBgIndex=0;
+  saveG();renderCoverBg();renderBgCustoms();
+}
+
+document.getElementById('bgFileInput').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f)return;
+  if(G.customBgs.length>=3){showToast('カスタム背景は最大3枚です');return;}
+  compress(f,600,0.7,b=>{G.customBgs.push(b);G.coverBgIndex=COVER_PRESETS.length+G.customBgs.length-1;saveG();renderCoverBg();renderBgPresets();renderBgCustoms();showToast('🖼 背景を追加しました');});
+  e.target.value='';
+});
+
+// ── アプリ背景 ─────────────────────────────────────────────
+function applyAppBg(){
+  let ov=document.getElementById('appBgOverlay');
+  if(!ov){ov=document.createElement('div');ov.id='appBgOverlay';document.body.prepend(ov);}
+  const d=D();
+  if(d&&d.appBgImage){ov.style.cssText=`position:fixed;inset:0;z-index:-1;background:url(${d.appBgImage}) center/cover`;ov.style.setProperty('--has-bg','1');}
+  else{ov.style.cssText='position:fixed;inset:0;z-index:-1';}
+}
+
+// ── メインアプリ初期化 ─────────────────────────────────────
+function initMainApp(){
+  const d=D();if(!d)return;
+  document.getElementById('appTitle').textContent=d.appTitle||'パパの妊娠日記';
+  document.getElementById('headerSub').textContent=`${d.babyNick||'赤ちゃん'}の成長を記録しよう`;
+  DD=new Date();DD.setHours(0,0,0,0);
+  updateDateUI();buildWeekGrid();updateBabyInfo();loadMama();updateInstaPreview();
+  document.getElementById('appTitleInput').value=d.appTitle||'パパの妊娠日記';
+  document.getElementById('dueDateInput').value=d.dueDate||'';
+  document.getElementById('babyNickInput').value=d.babyNick||'';
+  renderAppBgPreview();
+  setupInput('dailyPhotoInput','daily',()=>dk(DD),(k)=>{ed(k);return D().dailyDiaries[k].photos;},(k,p)=>{ed(k);D().dailyDiaries[k].photos=p;},'dailyPhotoGrid');
+  setupInput('mamaPhotoInput','mama',()=>CW,(k)=>{em(k);return D().mamaWeekly[k].photos;},(k,p)=>{em(k);D().mamaWeekly[k].photos=p;},'mamaPhotoGrid');
+  setupInput('familyPhotoInput','family',()=>0,()=>{if(!D().birthInfo.familyPhotos)D().birthInfo.familyPhotos=[];return D().birthInfo.familyPhotos;},(k,p)=>{D().birthInfo.familyPhotos=p;},'familyPhotoGrid');
+  setupInput('appBgInput','appbg',()=>0,()=>[],(k,p)=>{if(p.length){D().appBgImage=p[p.length-1];saveG();applyAppBg();renderAppBgPreview();showToast('🖼 背景を設定しました');}},'');
+  setupInput('coverBgFileInput','coverbg',()=>0,()=>[],(k,p)=>{if(p.length){D().birthInfo.coverBg=p[p.length-1];saveG();const el=document.getElementById('coverBgPreview');if(el){el.style.backgroundImage=`url(${p[p.length-1]})`;el.classList.add('has-bg');}showToast('🖼 表紙背景を設定しました');}},'');
+  showView('record');
+}
+
+function ed(k){if(!D().dailyDiaries[k])D().dailyDiaries[k]={text:'',photos:[]};}
+function em(k){if(!D().mamaWeekly[k])D().mamaWeekly[k]={text:'',photos:[]};}
+function dk(dt){return`${dt.getFullYear()}-${dt.getMonth()+1}-${dt.getDate()}`;}
+
+// ── 画像圧縮 ───────────────────────────────────────────────
+function compress(file,MAX,q,cb){
+  const img=new Image(),r=new FileReader();
+  r.onload=ev=>{img.onload=()=>{
+    const c=document.createElement('canvas');let w=img.width,h=img.height;
+    if(w>MAX||h>MAX){if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;}}
+    c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);cb(c.toDataURL('image/jpeg',q));
+  };img.src=ev.target.result;};r.readAsDataURL(file);
+}
+
+// ── 写真入力セットアップ ───────────────────────────────────
+function setupInput(id,type,getKey,getPhotos,setPhotos,gridId){
+  const old=document.getElementById(id);if(!old)return;
+  const el=old.cloneNode(true);old.parentNode.replaceChild(el,old);
+  el.addEventListener('change',e=>{
+    const files=Array.from(e.target.files);const key=getKey();let photos=getPhotos(key);let n=0;
+    files.forEach(f=>compress(f,800,0.72,b=>{
+      if(type!=='appbg'&&type!=='coverbg')photos.push(b);
+      else photos=[b];
+      setPhotos(key,photos);n++;
+      if(n===files.length){saveG();if(gridId)renderGrid(gridId,photos,type,key);if(type!=='appbg'&&type!=='coverbg')showToast(`📷 ${n}枚追加しました`);}
+    }));
+    e.target.value='';
+  });
+}
+
+function renderGrid(gridId,photos,type,key){
+  const g=document.getElementById(gridId);if(!g)return;
+  if(!photos||!photos.length){g.innerHTML='';return;}
+  g.innerHTML=photos.map((s,i)=>`<div class="photo-thumb"><img src="${s}"><button class="rm-btn" onclick="rmPhoto('${type}','${key}',${i})">✕</button></div>`).join('');
+}
+function rmPhoto(type,key,i){
+  const d=D();if(!d)return;
+  if(type==='daily'){if(!d.dailyDiaries[key])return;d.dailyDiaries[key].photos.splice(i,1);renderGrid('dailyPhotoGrid',d.dailyDiaries[key].photos,type,key);}
+  else if(type==='mama'){if(!d.mamaWeekly[key])return;d.mamaWeekly[key].photos.splice(i,1);renderGrid('mamaPhotoGrid',d.mamaWeekly[key].photos,type,key);}
+  else if(type==='family'){if(!d.birthInfo||!d.birthInfo.familyPhotos)return;d.birthInfo.familyPhotos.splice(i,1);renderGrid('familyPhotoGrid',d.birthInfo.familyPhotos,type,key);}
+  saveG();
+}
+
+// ── Baby SVG ───────────────────────────────────────────────
+function drawBaby(el,w){
+  if(!el)return;const p=Math.min(0.3+w*0.018,1);const cx=40,cy=44,hr=16*p,bh=18*p,bw=12*p;
+  const sk=w<10?'#FAC775':w<20?'#F0997B':'#F4C0D1';let s='';
+  s+=`<circle cx="${cx}" cy="${cy-bh/2-hr}" r="${hr}" fill="${sk}" stroke="#E8A0B0" stroke-width="1.2"/>`;
+  s+=`<ellipse cx="${cx}" cy="${cy}" rx="${bw}" ry="${bh/2}" fill="${sk}" stroke="#E8A0B0" stroke-width="1.2"/>`;
+  if(w>=8){const a=8*p;s+=`<line x1="${cx-bw}" y1="${cy-bh/4}" x2="${cx-bw-a}" y2="${cy}" stroke="${sk}" stroke-width="${3*p}" stroke-linecap="round"/>`;s+=`<line x1="${cx+bw}" y1="${cy-bh/4}" x2="${cx+bw+a}" y2="${cy}" stroke="${sk}" stroke-width="${3*p}" stroke-linecap="round"/>`;}
+  if(w>=10){const l=10*p;s+=`<line x1="${cx-5*p}" y1="${cy+bh/2}" x2="${cx-6*p}" y2="${cy+bh/2+l}" stroke="${sk}" stroke-width="${3*p}" stroke-linecap="round"/>`;s+=`<line x1="${cx+5*p}" y1="${cy+bh/2}" x2="${cx+6*p}" y2="${cy+bh/2+l}" stroke="${sk}" stroke-width="${3*p}" stroke-linecap="round"/>`;}
+  if(w>=14){const ey=cy-bh/2-hr*1.15,er=1.8*p;s+=`<circle cx="${cx-5*p}" cy="${ey}" r="${er}" fill="#885566"/>`;s+=`<circle cx="${cx+5*p}" cy="${ey}" r="${er}" fill="#885566"/>`;s+=`<path d="M${cx-hr*0.45} ${cy-bh/2-hr*0.65} Q${cx} ${cy-bh/2-hr*0.45} ${cx+hr*0.45} ${cy-bh/2-hr*0.65}" stroke="#D4537E" stroke-width="1.2" fill="none" stroke-linecap="round"/>`;}
+  el.innerHTML=s;
+}
+
+// ── 週数グリッド ───────────────────────────────────────────
+function buildWeekGrid(){
+  const d=D();if(!d)return;
+  const c=document.getElementById('weekGrid');if(!c)return;c.innerHTML='';
+  for(let w=4;w<=40;w++){
+    const btn=document.createElement('div');btn.className='week-btn';
+    const has=!!(d.mamaWeekly[w]&&(d.mamaWeekly[w].text||(d.mamaWeekly[w].photos&&d.mamaWeekly[w].photos.length)));
+    if(has)btn.classList.add('has-diary');if(w===CW)btn.classList.add('active');
+    btn.textContent=w;
+    if(has){const dot=document.createElement('span');dot.className='dot-mark';btn.appendChild(dot);}
+    btn.addEventListener('click',()=>{CW=w;D().currentWeek=w;saveG();buildWeekGrid();updateBabyInfo();loadMama();});
+    c.appendChild(btn);
+  }
+  const b=document.getElementById('weekBadgeSub');if(b)b.textContent=CW+'週';
+}
+function toggleWeekGrid(){
+  const w=document.getElementById('weekGridWrap'),ch=document.getElementById('weekChevron');if(!w)return;
+  const open=w.style.display==='none';w.style.display=open?'block':'none';
+  if(ch)ch.style.transform=open?'rotate(180deg)':'';
+}
+
+// ── 週情報更新 ─────────────────────────────────────────────
+function updateBabyInfo(){
+  const d=D();if(!d)return;
+  const b=BD[CW]||BD[12];
+  document.getElementById('weekBadge').textContent=`妊娠 ${CW} 週`;
+  document.getElementById('weekTitle').textContent=b.t;
+  document.getElementById('weekDesc').textContent=b.d;
+  document.getElementById('headerWeekBadge').textContent=`${CW}週`;
+  const days=calcDays(d.dueDate);
+  document.getElementById('daysUntil').textContent=days!==null?`👶 パパになるまであと ${days} 日`:'';
+  const sz=b.s>=100?`${(b.s/10).toFixed(1)}`:b.s;
+  document.getElementById('statSize').textContent=sz;document.getElementById('statSizeU').textContent=b.s>=100?'cm':'mm';
+  const wt=b.w===0?'<1':b.w>=1000?`${(b.w/1000).toFixed(1)}`:b.w;
+  document.getElementById('statWeight').textContent=wt;document.getElementById('statWeightU').textContent=b.w>=1000?'kg':'g';
+  const sm=document.getElementById('statSimilar');sm.textContent=b.f;sm.classList.toggle('small-val',b.f.length>5);
+  drawBaby(document.getElementById('babyIconMain'),CW);
+  updateTrivia();updateInstaPreview();
+  const bs=document.getElementById('weekBadgeSub');if(bs)bs.textContent=CW+'週';
+}
+function updateTrivia(){
+  const t=TV[CW];const box=document.getElementById('triviaBox');if(!box)return;
+  if(!t){box.innerHTML='<div style="font-size:12px;color:var(--text3);text-align:center;padding:8px">この週の豆知識は準備中です</div>';return;}
+  box.innerHTML=`<div style="background:linear-gradient(135deg,#FFF8E1,#E8F5E9);border-radius:10px;padding:12px">
+    <div style="font-size:13px;color:#333;line-height:1.8;margin-bottom:8px">${t.fact}</div>
+    <div style="background:rgba(255,255,255,.7);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--teal);border-left:3px solid var(--teal)"><strong>👨 パパができること：</strong>${t.papa}</div>
+  </div>`;
+}
+
+// ── 日記 ──────────────────────────────────────────────────
+function updateDateUI(){
+  const key=dk(DD);const days='日月火水木金土';
+  document.getElementById('diaryDateLabel').textContent=`${DD.getMonth()+1}/${DD.getDate()}（${days[DD.getDay()]}）`;
+  const today=new Date();today.setHours(0,0,0,0);
+  document.getElementById('dateNextBtn').disabled=DD>=today;
+  const d=D();if(!d)return;
+  const e=d.dailyDiaries[key]||{};
+  document.getElementById('dailyMsg').value=e.text||'';
+  renderGrid('dailyPhotoGrid',e.photos||[],'daily',key);
+}
+function moveDiaryDate(delta){
+  const nd=new Date(DD);nd.setDate(nd.getDate()+delta);
+  const today=new Date();today.setHours(0,0,0,0);if(nd>today)return;
+  DD=nd;updateDateUI();
+}
+function jumpToToday(){DD=new Date();DD.setHours(0,0,0,0);updateDateUI();}
+function jumpToDiaryDate(dkey){const[y,m,d]=dkey.split('-');DD=new Date(+y,+m-1,+d);DD.setHours(0,0,0,0);showView('record');updateDateUI();}
+function saveDailyDiary(){const key=dk(DD);ed(key);D().dailyDiaries[key].text=document.getElementById('dailyMsg').value;saveG();showToast('💾 保存しました！');buildWeekGrid();}
+function loadMama(){const d=D();if(!d)return;const e=d.mamaWeekly[CW]||{};document.getElementById('mamaMsg').value=e.text||'';renderGrid('mamaPhotoGrid',e.photos||[],'mama',CW);}
+function saveMamaDiary(){em(CW);D().mamaWeekly[CW].text=document.getElementById('mamaMsg').value;saveG();showToast('💚 保存しました！');buildWeekGrid();}
+
+// ── 日めくり ──────────────────────────────────────────────
+function updateFlip(){
+  const d=D();if(!d)return;
+  const b=BD[FW]||BD[12];const e=d.mamaWeekly[FW]||{};
+  document.getElementById('flipWeekBg').textContent=FW;
+  document.getElementById('flipBadge').textContent=`妊娠 ${FW} 週`;
+  document.getElementById('flipTrim').textContent=FW<=13?'妊娠初期':FW<=27?'妊娠中期':'妊娠後期';
+  document.getElementById('flipTitle').textContent=b.t;
+  document.getElementById('flipDesc').textContent=b.d;
+  document.getElementById('flipWkInd').textContent=`${FW}/40`;
+  const sz=b.s>=100?`${(b.s/10).toFixed(1)}cm`:`${b.s}mm`;
+  const wt=b.w===0?'<1g':b.w>=1000?`${(b.w/1000).toFixed(1)}kg`:`${b.w}g`;
+  document.getElementById('flipChips').innerHTML=`<span class="flip-chip">📏 ${sz}</span><span class="flip-chip">⚖️ ${wt}</span><span class="flip-chip">🫐 ${b.f}</span>`;
+  drawBaby(document.getElementById('babyIconFlip'),FW);
+  const cc=document.getElementById('flipComment');
+  if(e.text){cc.textContent='💬 '+e.text;cc.style.display='block';}else cc.style.display='none';
+  const pp=document.getElementById('flipPhoto');
+  if(e.photos&&e.photos.length)pp.innerHTML=`<img src="${e.photos[0]}" style="width:100%;border-radius:10px;max-height:150px;object-fit:cover">`;else pp.innerHTML='';
+  document.getElementById('flipPrevBtn').disabled=FW<=4;
+  document.getElementById('flipNextBtn').disabled=FW>=40;
+  buildFlipDots();buildFlipWeekDiary();
+}
+function buildFlipDots(){
+  const d=D();if(!d)return;
+  const c=document.getElementById('flipDots');if(!c)return;c.innerHTML='';
+  for(let w=4;w<=40;w++){
+    const dot=document.createElement('div');dot.className='flip-dot';
+    const has=!!(d.mamaWeekly[w]&&(d.mamaWeekly[w].text||(d.mamaWeekly[w].photos&&d.mamaWeekly[w].photos.length)));
+    if(has)dot.classList.add('has');if(w===FW)dot.classList.add('cur');
+    dot.textContent=w;dot.addEventListener('click',()=>{FW=w;updateFlip();});c.appendChild(dot);
+  }
+  const cur=c.querySelector('.cur');if(cur)cur.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+}
+function buildFlipWeekDiary(){
+  const d=D();if(!d)return;
+  const c=document.getElementById('flipWeekDiary');if(!c)return;
+  const days='日月火水木金土';let entries=[];
+  if(d.dueDate){
+    const due=new Date(d.dueDate);const w0=new Date(due);w0.setDate(w0.getDate()-40*7);
+    const ws=new Date(w0);ws.setDate(w0.getDate()+(FW-1)*7);
+    for(let i=0;i<7;i++){const dt=new Date(ws);dt.setDate(ws.getDate()+i);const k=dk(dt);const e=d.dailyDiaries[k];if(e&&(e.text||(e.photos&&e.photos.length)))entries.push({key:k,entry:e,date:dt});}
+  }
+  if(!entries.length){c.innerHTML='<div style="padding:12px 14px;text-align:center;font-size:12px;color:var(--text3)">この週のパパ記録はまだありません<br><span style="font-size:11px">（出産予定日を設定すると表示されます）</span></div>';return;}
+  c.innerHTML=entries.map(({key,entry,date})=>{
+    const[ky,km,kd]=key.split('-');
+    const ph=entry.photos&&entry.photos.length?`<div style="display:flex;gap:5px;margin-top:5px;flex-wrap:wrap">${entry.photos.slice(0,3).map(p=>`<img src="${p}" style="width:58px;height:58px;object-fit:cover;border-radius:7px">`).join('')}</div>`:'';
+    return`<div style="padding:10px 14px;border-bottom:1px solid var(--border)"><div style="font-size:11px;color:var(--pink);margin-bottom:3px;font-weight:500">${km}月${kd}日（${days[date.getDay()]}）</div>${entry.text?`<div style="font-size:13px;color:var(--text);line-height:1.7">${entry.text}</div>`:''}${ph}</div>`;
+  }).join('');
+}
+function flipPrev(){if(FW>4){FW--;updateFlip();}}
+function flipNext(){if(FW<40){FW++;updateFlip();}}
+(function(){let sx=0;const c=document.getElementById('flipCard');c.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;},{passive:true});c.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>50){if(dx<0)flipNext();else flipPrev();}},{passive:true});})();
+
+// ── カレンダー ─────────────────────────────────────────────
+function buildCal(){
+  document.getElementById('calTitle').textContent=`${CY}年 ${MJ[CM]}`;
+  const g=document.getElementById('calGrid');if(!g)return;g.innerHTML='';
+  const today=new Date();const fd=new Date(CY,CM,1).getDay();const dm=new Date(CY,CM+1,0).getDate();
+  const d=D();
+  for(let i=0;i<fd;i++){const c=document.createElement('div');c.className='cal-day';g.appendChild(c);}
+  for(let dd=1;dd<=dm;dd++){
+    const cell=document.createElement('div');cell.className='cal-day';cell.textContent=dd;
+    if(dd===today.getDate()&&CM===today.getMonth()&&CY===today.getFullYear())cell.classList.add('today');
+    const dkey=`${CY}-${CM+1}-${dd}`;
+    if(d){const e=d.dailyDiaries[dkey];if(e&&(e.text||(e.photos&&e.photos.length)))cell.classList.add('has-papa');}
+    cell.addEventListener('click',()=>jumpToDiaryDate(dkey));
+    g.appendChild(cell);
+  }
+}
+function calPrev(){CM--;if(CM<0){CM=11;CY--;}buildCal();}
+function calNext(){CM++;if(CM>11){CM=0;CY++;}buildCal();}
+
+// ── ロードマップ ───────────────────────────────────────────
+function buildRoadmap(){
+  const d=D();if(!d)return;
+  const phase=CW<=13?'early':CW<=27?'mid':CW<=40?'late':'after';
+  const phaseLabel={early:'妊娠初期',mid:'妊娠中期',late:'妊娠後期',after:'出産後'}[phase];
+  const phaseColor={early:'#7F77DD',mid:'#1D9E75',late:'#D4537E',after:'#EF9F27'}[phase];
+  const checks=d.roadmapChecks||{};
+  const done=CHECKS.filter(c=>checks[c.id]).length;
+  const pct=Math.round(done/CHECKS.length*100);
+  const c=document.getElementById('roadmapContent');if(!c)return;
+  c.innerHTML=`
+  <div style="background:linear-gradient(135deg,#f0f0ff,#e8f8f2);border-radius:14px;padding:14px;margin-bottom:12px;text-align:center">
+    <div style="font-size:11px;color:#888;margin-bottom:4px">妊娠〜出産〜育休までの完全ロードマップ</div>
+    <div style="font-size:20px;font-weight:600;color:${phaseColor};font-family:'Klee One',cursive">${phaseLabel}</div>
+    <div style="font-size:12px;color:#666;margin-top:2px">妊娠 ${CW} 週</div>
+  </div>
+  ${rmSec('👨 今週パパがやること','#EEEDFE','#7F77DD',ROADMAP.papa[phase])}
+  ${rmSec('👩 今週ママがやること','#FBEAF0','#D4537E',ROADMAP.mama[phase])}
+  ${rmSec('📋 今週から申請できる制度','#E1F5EE','#1D9E75',ROADMAP.seido[phase])}
+  <div style="background:rgba(255,255,255,.93);border-radius:14px;border:1px solid var(--border);overflow:hidden;margin-bottom:10px">
+    <div style="padding:10px 14px;background:#FAEEDA;color:#EF9F27;font-size:13px;font-weight:500;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--border)">
+      <i class="ti ti-checklist"></i> 手続きチェックリスト
+      <span style="margin-left:auto;font-weight:700">${pct}% 完了</span>
+    </div>
+    <div style="padding:10px 14px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <div style="flex:1;height:8px;background:#eee;border-radius:4px;overflow:hidden">
+          <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,#EF9F27,#D4537E);border-radius:4px;transition:.3s"></div>
+        </div><span style="font-size:12px;font-weight:600;color:#EF9F27">${pct}%</span>
+      </div>
+      ${CHECKS.map(ch=>`<label style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer" onclick="toggleCheck('${ch.id}')">
+        <span style="width:22px;height:22px;border-radius:6px;border:2px solid ${checks[ch.id]?'var(--teal)':'var(--border)'};background:${checks[ch.id]?'var(--teal)':'var(--bg)'};color:white;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0">${checks[ch.id]?'✓':''}</span>
+        <span style="font-size:13px;color:${checks[ch.id]?'var(--text3)':'var(--text)'};${checks[ch.id]?'text-decoration:line-through':''}">${ch.l}</span>
+      </label>`).join('')}
+    </div>
+  </div>
+  <div style="background:rgba(255,255,255,.93);border-radius:14px;border:1px solid var(--border);overflow:hidden;margin-bottom:10px">
+    <div style="padding:10px 14px;background:#E1F5EE;color:#1D9E75;font-size:13px;font-weight:500;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--border)"><i class="ti ti-info-circle"></i> 制度ガイド</div>
+    <div style="padding:10px 14px">
+      ${GUIDE.map(g=>`<div style="background:var(--bg);border-radius:10px;padding:12px;margin-bottom:8px;border:1px solid var(--border)">
+        <div style="font-size:14px;font-weight:600;color:var(--teal);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)">${g.n}</div>
+        ${[['対象',g.t],['金額',g.a,'color:var(--pink);font-weight:500'],['申請',g.ap],['期限',g.lm,'color:#E65100'],['書類',g.d]].map(([k,v,st])=>`<div style="display:flex;gap:8px;font-size:12px;padding:3px 0"><span style="color:var(--text3);width:36px;flex-shrink:0">${k}</span><span ${st?`style="${st}"`:''} >${v}</span></div>`).join('')}
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+function rmSec(title,bg,color,items){return`<div style="background:rgba(255,255,255,.93);border-radius:14px;border:1px solid var(--border);overflow:hidden;margin-bottom:10px"><div style="padding:10px 14px;background:${bg};color:${color};font-size:13px;font-weight:500;border-bottom:1px solid var(--border)">${title}</div><div style="padding:10px 14px">${items.map(t=>`<div style="font-size:13px;color:var(--text);padding:6px 0;border-bottom:1px solid var(--border);line-height:1.5">${t}</div>`).join('')}</div></div>`;}
+function toggleCheck(id){const d=D();if(!d)return;if(!d.roadmapChecks)d.roadmapChecks={};d.roadmapChecks[id]=!d.roadmapChecks[id];saveG();buildRoadmap();}
+
+// ── インスタプレビュー ─────────────────────────────────────
+function updateInstaPreview(){
+  const d=D();if(!d)return;
+  const b=BD[CW]||BD[12];const e=d.dailyDiaries[dk(new Date())]||{};
+  document.getElementById('instaWeekNum').textContent=CW;
+  document.getElementById('instaTitle').textContent=b.t;
+  document.getElementById('instaBody').textContent=e.text?e.text.substring(0,30):b.d.substring(0,28)+'…';
+}
+
+// ── 出力系 ────────────────────────────────────────────────
+function wt(ctx,text,mw){const l=[];let ln='';for(const c of text){if(ctx.measureText(ln+c).width>mw){l.push(ln);ln=c;}else ln+=c;}if(ln)l.push(ln);return l;}
+function rr(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.arcTo(x+w,y,x+w,y+r,r);ctx.lineTo(x+w,y+h-r);ctx.arcTo(x+w,y+h,x+w-r,y+h,r);ctx.lineTo(x+r,y+h);ctx.arcTo(x,y+h,x,y+h-r,r);ctx.lineTo(x,y+r);ctx.arcTo(x,y,x+r,y,r);ctx.closePath();}
+function cf(size){return`${size}px "Kosugi Maru",sans-serif`;}
+
+function exportInstagram(){
+  const canvas=document.getElementById('exportCanvas');const ctx=canvas.getContext('2d');const S=1080;canvas.width=S;canvas.height=S;
+  const gr=ctx.createLinearGradient(0,0,S,S);gr.addColorStop(0,'#FBEAF0');gr.addColorStop(1,'#E1F5EE');ctx.fillStyle=gr;ctx.fillRect(0,0,S,S);
+  ctx.save();ctx.globalAlpha=.35;ctx.fillStyle='#F4C0D1';ctx.beginPath();ctx.arc(S-120,120,150,0,Math.PI*2);ctx.fill();ctx.fillStyle='#9FE1CB';ctx.beginPath();ctx.arc(120,S-120,120,0,Math.PI*2);ctx.fill();ctx.restore();
+  ctx.fillStyle='#D4537E';ctx.font=`bold 36px sans-serif`;ctx.textAlign='center';ctx.fillText('W E E K',S/2,300);
+  ctx.font=`bold 260px "Klee One",cursive`;ctx.fillText(CW,S/2,590);
+  const b=BD[CW]||BD[12];const d=D();const e=d?d.dailyDiaries[dk(new Date())]||{}:{};
+  ctx.fillStyle='#1a1a1a';ctx.font=`bold 44px "Kosugi Maru",sans-serif`;ctx.fillText(b.t,S/2,695);
+  ctx.fillStyle='#666';ctx.font=`32px "Kosugi Maru",sans-serif`;ctx.fillText(e.text?e.text.substring(0,26):b.d.substring(0,24)+'…',S/2,760);
+  ctx.fillStyle='#ccc';ctx.font=`22px sans-serif`;ctx.fillText('#パパ日記  #妊娠記録  #プレパパ',S/2,920);
+  const lnk=document.createElement('a');lnk.download=`papa_week${CW}.png`;lnk.href=canvas.toDataURL('image/png');lnk.click();showToast('📸 インスタ用画像を保存しました！');
+}
+
+function exportBabyGrowth(){
+  const d=D();if(!d)return;
+  const weeks=Object.keys(d.mamaWeekly).map(Number).filter(w=>{const e=d.mamaWeekly[w];return e&&(e.text||(e.photos&&e.photos.length));}).sort((a,b)=>a-b);
+  if(!weeks.length){showToast('⚠️ ママのお腹の記録がありません');return;}
+  const cols=Math.min(weeks.length,4),rows=Math.ceil(weeks.length/cols);
+  const cW=480,cH=520,pad=40,hdr=110;const W=cols*cW+pad*2,H=rows*cH+pad*2+hdr+60;
+  const canvas=document.getElementById('exportCanvas');canvas.width=W;canvas.height=H;const ctx=canvas.getContext('2d');
+  const gr=ctx.createLinearGradient(0,0,W,H);gr.addColorStop(0,'#FFF5F8');gr.addColorStop(1,'#F0FBF6');ctx.fillStyle=gr;ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#D4537E';ctx.font=cf(Math.round(W*.04));ctx.textAlign='center';ctx.fillText((d.birthInfo&&d.birthInfo.bookTitle)||'ママのお腹の成長記録',W/2,pad+55);
+  ctx.fillStyle='#aaa';ctx.font=cf(Math.round(W*.018));ctx.fillText(`妊娠 ${weeks[0]}週 〜 ${weeks[weeks.length-1]}週`,W/2,pad+85);
+  let pend=weeks.filter(w=>d.mamaWeekly[w].photos&&d.mamaWeekly[w].photos.length).length||1;
+  weeks.forEach((w,idx)=>{
+    const col=idx%cols,row=Math.floor(idx/cols);const x=pad+col*cW,y=pad+hdr+row*cH;
+    const ent=d.mamaWeekly[w];
+    ctx.fillStyle='white';ctx.shadowColor='rgba(212,83,126,.1)';ctx.shadowBlur=14;rr(ctx,x+8,y+8,cW-16,cH-16,12);ctx.fill();ctx.shadowBlur=0;
+    ctx.fillStyle='#D4537E';rr(ctx,x+16,y+16,120,34,17);ctx.fill();ctx.fillStyle='white';ctx.font=cf(Math.round(W*.015));ctx.textAlign='left';ctx.fillText(`妊娠 ${w} 週`,x+22,y+39);
+    const dt=()=>{if(ent.text){ctx.fillStyle='#555';ctx.font=cf(Math.round(W*.013));wt(ctx,ent.text,cW-44).slice(0,3).forEach((l,li)=>ctx.fillText(l,x+16,y+350+li*24));}pend--;if(pend<=0)fin();};
+    if(ent.photos&&ent.photos.length){const img=new Image();img.onload=()=>{ctx.save();rr(ctx,x+16,y+58,cW-32,260,10);ctx.clip();const ir=(cW-32)/260,ir2=img.width/img.height;let sx=0,sy=0,sw=img.width,sh=img.height;if(ir2>ir){sw=img.height*ir;sx=(img.width-sw)/2;}else{sh=img.width/ir;sy=(img.height-sh)/2;}ctx.drawImage(img,sx,sy,sw,sh,x+16,y+58,cW-32,260);ctx.restore();dt();};img.src=ent.photos[0];}
+    else{ctx.fillStyle='#F4E8EC';rr(ctx,x+16,y+58,cW-32,260,10);ctx.fill();ctx.font=`${Math.round(W*.05)}px sans-serif`;ctx.textAlign='center';ctx.fillText('🤰',x+cW/2,y+205);dt();}
+  });
+  function fin(){ctx.fillStyle='#ccc';ctx.font=cf(Math.round(W*.013));ctx.textAlign='center';ctx.fillText('#パパ日記 #妊娠記録',W/2,H-20);const lnk=document.createElement('a');lnk.download='mama_growth.png';lnk.href=canvas.toDataURL('image/png');lnk.click();showToast('📥 成長記録を保存しました！');}
+}
+
+function showMonthPicker(){
+  const d=D();if(!d)return;
+  const months=new Set(Object.keys(d.dailyDiaries).map(k=>{const[y,m]=k.split('-');return`${y}-${m}`;}));
+  if(!months.size){showToast('⚠️ 日記の記録がありません');return;}
+  document.getElementById('monthPickerList').innerHTML=[...months].sort().map(ym=>{const[y,m]=ym.split('-');return`<div class="month-item" onclick="exportMonthCal(${y},${m});closeMonthPicker()"><span>${y}年${m}月</span><i class="ti ti-download"></i></div>`;}).join('');
+  document.getElementById('monthPickerModal').style.display='flex';
+}
+function closeMonthPicker(){document.getElementById('monthPickerModal').style.display='none';}
+function exportMonthCal(year,month){
+  const d=D();if(!d)return;
+  const days=new Date(year,month,0).getDate();const entries=[];
+  for(let dd=1;dd<=days;dd++){const k=`${year}-${month}-${dd}`;const e=d.dailyDiaries[k];if(e&&(e.text||(e.photos&&e.photos.length)))entries.push({day:dd,key:k,entry:e});}
+  if(!entries.length){showToast('⚠️ この月の記録がありません');return;}
+  const W=2480,H=3508,pad=80,hdr=220;const canvas=document.getElementById('exportCanvas');canvas.width=W;canvas.height=H;const ctx=canvas.getContext('2d');
+  const gr=ctx.createLinearGradient(0,0,W,H);gr.addColorStop(0,'#FFF5F8');gr.addColorStop(1,'#F0FBF6');ctx.fillStyle=gr;ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#D4537E';ctx.font=cf(96);ctx.textAlign='center';ctx.fillText(`${year}年${month}月`,W/2,pad+80);
+  ctx.fillStyle='#aaa';ctx.font=cf(48);ctx.fillText('パパ妊娠日記',W/2,pad+148);
+  const cols=2,cW=(W-pad*2-40)/cols,cH=440;
+  let pend=entries.filter(({entry})=>entry.photos&&entry.photos.length).length||1;
+  entries.forEach(({day,entry},i)=>{
+    const col=i%cols,row=Math.floor(i/cols);const x=pad+col*(cW+40),y=hdr+pad+row*(cH+30);
+    ctx.fillStyle='rgba(255,255,255,.92)';ctx.shadowColor='rgba(212,83,126,.12)';ctx.shadowBlur=20;rr(ctx,x,y,cW,cH,20);ctx.fill();ctx.shadowBlur=0;
+    ctx.fillStyle='#D4537E';rr(ctx,x+20,y+18,180,50,25);ctx.fill();ctx.fillStyle='white';ctx.font=cf(32);ctx.textAlign='left';ctx.fillText(`${month}月${day}日`,x+30,y+53);
+    const dc=()=>{if(entry.text){ctx.fillStyle='#333';ctx.font=cf(34);const sx=entry.photos&&entry.photos.length?x+240:x+24,mw=entry.photos&&entry.photos.length?cW-260:cW-50;wt(ctx,entry.text,mw).slice(0,6).forEach((l,li)=>ctx.fillText(l,sx,y+105+li*52));}pend--;if(pend<=0)finM();};
+    if(entry.photos&&entry.photos.length){const img=new Image();img.onload=()=>{ctx.save();rr(ctx,x+20,y+78,200,200,12);ctx.clip();const ir=1,ir2=img.width/img.height;let sx=0,sy=0,sw=img.width,sh=img.height;if(ir2>ir){sw=img.height;sx=(img.width-sw)/2;}else{sh=img.width;sy=(img.height-sh)/2;}ctx.drawImage(img,sx,sy,sw,sh,x+20,y+78,200,200);ctx.restore();dc();};img.src=entry.photos[0];}else dc();
+  });
+  function finM(){ctx.fillStyle='#ccc';ctx.font=cf(44);ctx.textAlign='center';ctx.fillText('#パパ日記 #妊娠記録',W/2,H-50);const lnk=document.createElement('a');lnk.download=`papa_${year}_${month}.png`;lnk.href=canvas.toDataURL('image/png');lnk.click();showToast('📥 カレンダーを保存しました！');}
+}
+
+function exportBooklet(){
+  const d=D();if(!d)return;const b=d.birthInfo||{};
+  const font=FM[d.selectedFont]||FM.maru;
+  const mw=Object.keys(d.mamaWeekly).map(Number).filter(w=>{const e=d.mamaWeekly[w];return e&&(e.text||(e.photos&&e.photos.length));}).sort((a,c)=>a-c);
+  const dk2=Object.keys(d.dailyDiaries).filter(k=>{const e=d.dailyDiaries[k];return e&&(e.text||(e.photos&&e.photos.length));}).sort();
+  let etoS='',szS='';if(b.datetime){const dt=new Date(b.datetime);etoS=getEto(dt.getFullYear());szS=getSz(dt.getMonth()+1,dt.getDate());}
+  const byM={};dk2.forEach(k=>{const[y,m]=k.split('-');const ym=`${y}-${m}`;if(!byM[ym])byM[ym]=[];byM[ym].push({key:k,entry:d.dailyDiaries[k]});});
+  let html=`<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=Yomogi&family=DotGothic16&family=Zen+Kurenaido&family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
+<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:${font};background:#fff;max-width:210mm;margin:0 auto}
+.np{text-align:center;padding:12px;background:#f5f3ef;position:sticky;top:0;z-index:10;display:flex;gap:10px;justify-content:center}
+.pb{padding:10px 22px;background:#D4537E;color:white;border:none;border-radius:10px;font-size:15px;cursor:pointer;font-family:inherit}
+.bb{padding:10px 16px;background:#eee;color:#333;border:none;border-radius:10px;font-size:14px;cursor:pointer;font-family:inherit}
+.cv{width:210mm;height:297mm;display:flex;flex-direction:column;align-items:center;justify-content:center;${b.coverBg?`background-image:url(${b.coverBg});background-size:cover;background-position:center;`:'background:linear-gradient(135deg,#FFF5F8,#F0FBF6);'}padding:36px;text-align:center;page-break-after:always;position:relative;overflow:hidden}
+.cv::before{content:'';position:absolute;inset:0;background:rgba(255,245,248,.74)}
+.cv>*{position:relative;z-index:1}
+.sp{width:210mm;min-height:297mm;padding:28px 36px;page-break-before:always;page-break-after:always;display:flex;flex-direction:column}
+@media print{.np{display:none!important}.cv,.sp{page-break-after:always}}
+</style></head><body>
+<div class="np"><button class="bb" onclick="window.close()">← 閉じる</button><button class="pb" onclick="window.print()">🖨 印刷 / PDF保存</button></div>
+<div class="cv">
+  <div style="font-size:30px;font-weight:600;color:#D4537E;margin-bottom:10px">${b.bookTitle||'パパからわが子へ'}</div>
+  <div style="font-size:14px;color:#888;margin-bottom:16px">妊娠の記録</div>
+  ${etoS||szS?`<div style="display:flex;gap:12px;justify-content:center;margin-bottom:14px">${etoS?`<span style="background:rgba(255,255,255,.85);border-radius:20px;padding:6px 16px;font-size:17px">${etoS}</span>`:''} ${szS?`<span style="background:rgba(255,255,255,.85);border-radius:20px;padding:6px 16px;font-size:17px">${szS}</span>`:''}</div>`:''}
+  ${b.familyPhotos&&b.familyPhotos.length?`<img src="${b.familyPhotos[0]}" style="width:180px;height:180px;border-radius:50%;object-fit:cover;margin:0 auto 14px;border:5px solid white">` :''}
+  ${b.babyName||b.weight?`<div style="background:rgba(255,255,255,.88);border-radius:14px;padding:16px 24px;margin:0 auto 12px;text-align:left;width:100%;max-width:360px">${[['お名前',b.babyName],['性別',b.gender],['誕生日時',b.datetime?new Date(b.datetime).toLocaleString('ja-JP'):''],['出産場所',b.place],['体重',b.weight],['身長',b.height]].filter(([k,v])=>v).map(([k,v])=>`<div style="display:flex;padding:7px 0;border-bottom:1px solid #f0ede8;font-size:13px"><span style="color:#aaa;width:80px;flex-shrink:0">${k}</span><span>${v}</span></div>`).join('')}</div>`:''}
+  ${b.message?`<div style="font-size:15px;color:#555;line-height:1.9;max-width:400px">"${b.message}"</div>`:''}
+</div>`;
+  if(mw.length){html+=`<div class="sp"><div style="font-size:22px;color:#D4537E;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid #F4C0D1">💕 ママのお腹の成長記録</div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;flex:1">`;mw.forEach(w=>{const e=d.mamaWeekly[w];html+=`<div style="background:#FFF5F8;border-radius:10px;padding:10px;text-align:center"><span style="background:#D4537E;color:white;font-size:10px;padding:2px 8px;border-radius:20px;display:inline-block;margin-bottom:5px">妊娠 ${w} 週</span>${e.photos&&e.photos.length?`<img src="${e.photos[0]}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;margin-bottom:5px">`:`<div style="width:100%;aspect-ratio:1;background:#fce8ef;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:5px">🤰</div>`}${e.text?`<div style="font-size:10px;color:#666;line-height:1.5;text-align:left">${e.text}</div>`:''}</div>`;});html+=`</div></div>`;}
+  Object.keys(byM).sort().forEach(ym=>{const[y,m]=ym.split('-');html+=`<div class="sp"><div style="font-size:22px;color:#D4537E;margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid #F4C0D1">📝 パパ日記</div><div style="font-size:19px;color:#1D9E75;margin-bottom:10px">${y}年${m}月</div><div>`;byM[ym].forEach(({key,entry})=>{const[ky,km,kd]=key.split('-');html+=`<div style="border-radius:10px;padding:10px 14px;margin-bottom:8px;border-left:3px solid #1D9E75;background:#F8FFFE"><div style="font-size:10px;color:#aaa;margin-bottom:4px">${ky}年${km}月${kd}日</div>${entry.text?`<div style="font-size:12px;color:#333;line-height:1.7">${entry.text}</div>`:''}${entry.photos&&entry.photos.length?`<div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">${entry.photos.map(p=>`<img src="${p}" style="width:62px;height:62px;object-fit:cover;border-radius:6px">`).join('')}</div>`:''}</div>`;});html+=`</div></div>`;});
+  html+=`</body></html>`;
+  const win=window.open('','_blank');if(win){win.document.write(html);win.document.close();}else showToast('⚠️ ポップアップをブロックしています');
+}
+
+function exportJSON(){
+  const d=D();if(!d)return;
+  const blob=new Blob([JSON.stringify({version:6,exported:new Date().toISOString(),...d},null,2)],{type:'application/json'});
+  const lnk=document.createElement('a');lnk.download=`papa_diary_${new Date().toISOString().slice(0,10)}.json`;lnk.href=URL.createObjectURL(blob);lnk.click();showToast('💾 バックアップを保存しました');
+}
+function importJSON(){document.getElementById('importInput').click();}
+document.getElementById('importInput').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=ev=>{try{const data=JSON.parse(ev.target.result);if(data.dailyDiaries!==undefined){const d=D();if(!d)return;Object.assign(d,{dailyDiaries:data.dailyDiaries||{},mamaWeekly:data.mamaWeekly||{},birthInfo:data.birthInfo||{},dueDate:data.dueDate||null,babyNick:data.babyNick||'',selectedFont:data.selectedFont||'maru',appBgImage:data.appBgImage||null,currentWeek:data.currentWeek||12,roadmapChecks:data.roadmapChecks||{}});saveG();initMainApp();showToast('✅ データを復元しました！');}else showToast('⚠️ 無効なファイルです');}catch{showToast('⚠️ 読み込みに失敗しました');}};r.readAsText(f);e.target.value='';
+});
+
+// ── 設定 ─────────────────────────────────────────────────
+function renderAppBgPreview(){const el=document.getElementById('appBgPreview');if(!el)return;const d=D();if(d&&d.appBgImage){el.style.backgroundImage=`url(${d.appBgImage})`;el.classList.add('has-bg');}else{el.style.backgroundImage='';el.classList.remove('has-bg');}}
+function clearAppBg(){const d=D();if(!d)return;d.appBgImage=null;saveG();applyAppBg();renderAppBgPreview();showToast('背景画像を削除しました');}
+function previewAppTitle(){const d=D();if(!d)return;const v=document.getElementById('appTitleInput').value;document.getElementById('appTitle').textContent=v||'パパの妊娠日記';d.appTitle=v;saveG();}
+function openSettings(){const d=D();if(!d)return;document.getElementById('appTitleInput').value=d.appTitle||'パパの妊娠日記';document.getElementById('dueDateInput').value=d.dueDate||'';document.getElementById('babyNickInput').value=d.babyNick||'';renderAppBgPreview();document.getElementById('settingsModal').style.display='flex';}
+function closeSettings(){document.getElementById('settingsModal').style.display='none';}
+function saveDueDate(){const d=D();if(!d)return;d.dueDate=document.getElementById('dueDateInput').value;saveG();updateBabyInfo();showToast('📅 出産予定日を設定しました');}
+function saveBabyNick(){const d=D();if(!d)return;d.babyNick=document.getElementById('babyNickInput').value;saveG();document.getElementById('headerSub').textContent=`${d.babyNick||'赤ちゃん'}の成長を記録しよう`;}
+function confirmClearAll(){if(confirm('⚠️ このBabyのデータをすべて削除しますか？')){const d=D();if(!d)return;Object.assign(d,{dailyDiaries:{},mamaWeekly:{},birthInfo:{},dueDate:null,babyNick:'',selectedFont:'maru',appBgImage:null,currentWeek:12,roadmapChecks:{}});saveG();closeSettings();initMainApp();showToast('🗑 削除しました');}}
+function openBirthModal(){const d=D();if(!d)return;const b=d.birthInfo||{};document.getElementById('bookTitle').value=b.bookTitle||'';document.getElementById('babyNameBirth').value=b.babyName||'';document.getElementById('birthDatetime').value=b.datetime||'';document.getElementById('birthPlace').value=b.place||'';document.getElementById('birthWeight').value=b.weight||'';document.getElementById('birthHeight').value=b.height||'';document.getElementById('birthMessage').value=b.message||'';document.getElementById('papaName').value=b.papaName||'';document.getElementById('mamaName').value=b.mamaName||'';if(b.gender)document.querySelectorAll('input[name=gender]').forEach(r=>{if(r.value===b.gender)r.checked=true;});document.getElementById('siblingRows').innerHTML='';if(b.siblings)b.siblings.forEach(s=>addSiblingRow(s));renderGrid('familyPhotoGrid',b.familyPhotos||[],'family',0);const prev=document.getElementById('coverBgPreview');if(prev){if(b.coverBg){prev.style.backgroundImage=`url(${b.coverBg})`;prev.classList.add('has-bg');}else{prev.style.backgroundImage='';prev.classList.remove('has-bg');}}document.querySelectorAll('.font-btn').forEach(btn=>btn.classList.toggle('active',btn.dataset.font===(d.selectedFont||'maru')));document.getElementById('birthModal').style.display='flex';}
+function closeBirthModal(){document.getElementById('birthModal').style.display='none';}
+function clearCoverBg(){const d=D();if(!d||!d.birthInfo)return;d.birthInfo.coverBg=null;saveG();const p=document.getElementById('coverBgPreview');if(p){p.style.backgroundImage='';p.classList.remove('has-bg');}showToast('背景を削除しました');}
+function saveBirthInfo(){const d=D();if(!d)return;const g=[...document.querySelectorAll('input[name=gender]')].find(r=>r.checked);d.birthInfo=Object.assign(d.birthInfo||{},{bookTitle:document.getElementById('bookTitle').value,babyName:document.getElementById('babyNameBirth').value,gender:g?g.value:'',datetime:document.getElementById('birthDatetime').value,place:document.getElementById('birthPlace').value,weight:document.getElementById('birthWeight').value,height:document.getElementById('birthHeight').value,message:document.getElementById('birthMessage').value,papaName:document.getElementById('papaName').value,mamaName:document.getElementById('mamaName').value,siblings:getSiblings(),familyPhotos:(d.birthInfo&&d.birthInfo.familyPhotos)||[],coverBg:(d.birthInfo&&d.birthInfo.coverBg)||null});saveG();closeBirthModal();showToast('⭐ 誕生情報を保存しました！');}
+function selectFont(k,btn){const d=D();if(!d)return;d.selectedFont=k;saveG();document.querySelectorAll('.font-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
+function addSiblingRow(v=''){const c=document.getElementById('siblingRows');const div=document.createElement('div');div.className='sibling-row';div.innerHTML=`<input type="text" class="text-input" placeholder="例：お兄ちゃん（田中 次郎）" value="${v}"><button onclick="this.parentElement.remove()"><i class="ti ti-x"></i></button>`;c.appendChild(div);}
+function getSiblings(){return[...document.querySelectorAll('#siblingRows .sibling-row input')].map(i=>i.value).filter(v=>v.trim());}
+
+// ── View ─────────────────────────────────────────────────
+function showView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.top-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+  if(name==='flip'){FW=CW;updateFlip();}
+  if(name==='calendar')buildCal();
+  if(name==='export')updateInstaPreview();
+  if(name==='roadmap')buildRoadmap();
+  document.getElementById('mainContent').scrollTo(0,0);
+}
+
+// ── Toast / Install ───────────────────────────────────────
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+function dismissInstall(){document.getElementById('installBanner').style.display='none';localStorage.setItem('installDismissed','1');}
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+
+// ── Init ────────────────────────────────────────────────
+// 古いキーをすべてクリアして新バージョンで起動
+(function(){
+  const oldKeys=['papaDiaries','papaDiaryState','papaDiaryV2','papaDiaryV3','papaDiaryV4','papaDiaryV5'];
+  oldKeys.forEach(k=>{try{localStorage.removeItem(k);}catch(e){}});
+})();
+loadG();
+initCoverPage();
+if(G.activeBabyId&&G.babies.find(b=>b.id===G.activeBabyId)){openBaby(G.activeBabyId);}
+
+</script>
+</body>
+</html>
